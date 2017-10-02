@@ -16,6 +16,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import tm.RotondAndesTM;
+import vos.ClientesRegistrados;
 import vos.Ingrediente;
 import vos.Producto;
 import vos.Restaurante;
@@ -54,6 +55,13 @@ public class RotondAndesServices {
 		return Response.status(200).entity(restaurantes).build();
 	}
 	
+	/**
+	 * Mètodo rest para el requerimiento de registro 1
+	 * @param producto
+	 * @param ingredientes
+	 * @param restaurante
+	 * @return
+	 */
 	@POST
 	@Path("productos/{restaurante}")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -74,4 +82,23 @@ public class RotondAndesServices {
 		}
 		return Response.status(203).build();
 	}
+	
+	@POST
+	@Path("cliente")
+	public Response postCliente(ClientesRegistrados cliente)
+	{
+		RotondAndesTM tm = new RotondAndesTM(getPath());
+		try
+		{
+			if(cliente.getUsuario() == null || cliente.getUsuario().length() < 5)
+				throw new Exception("Usuario inválido");
+			tm.registrarCliente(cliente);
+		}
+		catch (Exception e)
+		{
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(203).build();
+	}
+	
 }
