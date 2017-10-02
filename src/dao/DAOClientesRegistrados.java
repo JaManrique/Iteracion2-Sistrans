@@ -60,7 +60,7 @@ public class DAOClientesRegistrados {
 	 * @throws SQLException - Cualquier error que la base de datos arroje. No pudo agregar el video a la base de datos
 	 * @throws Exception - Cualquier error que no corresponda a la base de datos
 	 */
-	public void registrarCliente(ClientesRegistrados prod, String nomRest, List<Ingrediente> ingr) throws SQLException, Exception {
+	public void registrarCliente(ClientesRegistrados prod) throws SQLException, Exception {
 
 		String sql = "INSERT INTO CLIENTESREGISTRADOS VALUES ('";
 		sql += prod.getUsuario() + "','";
