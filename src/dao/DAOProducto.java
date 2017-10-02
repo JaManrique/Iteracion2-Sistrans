@@ -5,7 +5,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
+import vos.Ingrediente;
 import vos.Producto;
 import vos.Video;
 
@@ -145,7 +147,7 @@ public class DAOProducto {
 	 * @throws SQLException - Cualquier error que la base de datos arroje. No pudo agregar el video a la base de datos
 	 * @throws Exception - Cualquier error que no corresponda a la base de datos
 	 */
-	public void registrarProducto(Producto prod, String nomRest) throws SQLException, Exception {
+	public void registrarProducto(Producto prod, String nomRest, List<Ingrediente> ingr) throws SQLException, Exception {
 
 		String sql = "INSERT INTO PRODUCTO VALUES ('";
 		sql += prod.getNombre() + "',";
@@ -157,10 +159,15 @@ public class DAOProducto {
 		sql += ";"+ "INSERT INTO PRODUCTOSBODEGA VALUES (";
 		sql += 1 + ",'";
 		sql += nomRest + "',";
-		sql += prod.getNombre() + "',";
-		sql += ";"+ "INSERT INTO RESTAURANTE_PRODUCTO VALUES ('";
-		sql += prod.getNombre() + "','";
-		sql += nomRest + "');";
+		sql += prod.getNombre() + "');";
+		for (int i = 0; i < ingr.size(); i++) {
+			sql +="INSERT INTO PRODUCTO_INGREDIENTE VALUES ('";
+			sql += ingr.get(i).getNombre() + "','";
+			sql += prod.getNombre() + "');";
+		}
+		sql +="INSERT INTO RESTAURANTE_PRODUCTO VALUES ('";
+		sql += nomRest + "','";
+		sql += prod.getNombre() + "');";
 		
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
