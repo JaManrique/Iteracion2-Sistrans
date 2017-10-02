@@ -18,6 +18,7 @@ import javax.ws.rs.core.Response;
 import tm.RotondAndesTM;
 import vos.ClientesRegistrados;
 import vos.Ingrediente;
+import vos.Menu;
 import vos.Producto;
 import vos.Restaurante;
 
@@ -129,6 +130,24 @@ public class RotondAndesServices {
 			if(ingrediente.getNombre() == null || ingrediente.getNombre().length() < 5)
 				throw new Exception("Usuario inválido");
 			tm.registrarIngrediente(ingrediente);
+		}
+		catch (Exception e)
+		{
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(203).build();
+	}
+	
+	@POST
+	@Path("menus")
+	public Response postMenu(Menu menu)
+	{
+		RotondAndesTM tm = new RotondAndesTM(getPath());
+		try
+		{
+			if(menu.getNombre() == null || menu.getNombre().length() < 5)
+				throw new Exception("Usuario inválido");
+			tm.registrarMenu(menu);
 		}
 		catch (Exception e)
 		{

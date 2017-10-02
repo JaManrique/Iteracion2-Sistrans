@@ -57,7 +57,7 @@ public class DAOIngrediente {
 	 * @throws SQLException - Cualquier error que la base de datos arroje. No pudo agregar el video a la base de datos
 	 * @throws Exception - Cualquier error que no corresponda a la base de datos
 	 */
-	public void registrarRestaurante(Ingrediente prod, String rest) throws SQLException, Exception {
+	public void registrarIngrediente(Ingrediente prod, String rest) throws SQLException, Exception {
 
 		String sql = "INSERT INTO INGREDIENTE VALUES ('";
 		sql += prod.getNombre() + "','";

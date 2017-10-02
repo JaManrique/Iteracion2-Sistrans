@@ -254,7 +254,7 @@ public class RotondAndesTM {
 			//////transaccion
 			this.conn = darConexion();
 			dao.setConn(conn);
-			dao.registrarIngrediente();
+			dao.registrarIngrediente(ingrediente);
 			conn.commit();			
 
 		} catch (SQLException e) {
