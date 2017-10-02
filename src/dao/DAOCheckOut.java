@@ -102,4 +102,30 @@ public class DAOCheckOut {
 		}
 		return resp;
 	}
+	public void registrarServProd(CheckOut prod, Restaurante_Producto resp)throws SQLException, Exception
+	{
+		Integer cantAct=cantidadEnBodega(resp);
+		String sql="";
+		if(disponibleProducto(resp)==1)
+		{
+			sql += "UPDATE PRODUCTOSBODEGA SET CANTIDADPRODUCTO ="+ cantAct-- +" P WHERE P.NOMBRE LIKE '"+ resp.getProducto_nombre()+"' "
+					+ "AND P.INVENTARIO_RESTAURANTE_NOMBRE LIKE '"+resp.getRestaurante_nombre()+"'";
+		}
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		prepStmt.executeQuery();
+	}
+	public Integer cantidadEnBodega(Restaurante_Producto prod)throws SQLException, Exception
+	{
+		Integer a=0;
+		String sql = "SELECT * FROM PRODUCTOSBODEGA P WHERE P.NOMBRE LIKE '"+ prod.getProducto_nombre()+"' "
+				+ "AND P.INVENTARIO_RESTAURANTE_NOMBRE LIKE '"+prod.getRestaurante_nombre()+"'";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+		while (rs.next()) {
+			a = rs.getInt("CANTIDADPRODUCTO");
+		}
+		return a;
+	}
 }
