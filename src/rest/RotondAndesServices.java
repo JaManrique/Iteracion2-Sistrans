@@ -16,11 +16,14 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import tm.RotondAndesTM;
+import vos.CheckOut;
 import vos.ClientesRegistrados;
 import vos.Ingrediente;
 import vos.Menu;
 import vos.Producto;
 import vos.Restaurante;
+import vos.Restaurante_Producto;
+import vos.Zona;
 
 @Path("rotonda")
 public class RotondAndesServices {
@@ -38,6 +41,7 @@ public class RotondAndesServices {
 		return "{ \"ERROR\": \""+ e.getMessage() + "\"}" ;
 	}
 	
+	/*
 	@GET
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response getRestaurantes()
@@ -55,9 +59,57 @@ public class RotondAndesServices {
 		}
 		return Response.status(200).entity(restaurantes).build();
 	}
+	*/
 	
 	/**
-	 * Mètodo rest para el requerimiento de registro 1
+	 * Método rest para el requerimiento de registro 1
+	 * @param cliente
+	 * @return
+	 */
+	@POST
+	@Path("clientes")
+	public Response postCliente(ClientesRegistrados cliente)
+	{
+		RotondAndesTM tm = new RotondAndesTM(getPath());
+		try
+		{
+			if(cliente.getUsuario() == null || cliente.getUsuario().length() < 5)
+				throw new Exception("Usuario inválido");
+			tm.registrarCliente(cliente);
+		}
+		catch (Exception e)
+		{
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(203).build();
+	}
+	
+	/**
+	 * Método rest para el rquerimiento de registro 3
+	 * @param restaurante
+	 * @return
+	 */
+	@POST
+	@Path("restaurantes")
+	public Response postRestaurante(Restaurante restaurante)
+	{
+		RotondAndesTM tm = new RotondAndesTM(getPath());
+		try
+		{
+			if(restaurante.getNombre() == null || restaurante.getNombre().length() < 5)
+				throw new Exception("Usuario inválido");
+			tm.registrarRestaurante(restaurante);
+		}
+		catch (Exception e)
+		{
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(203).build();
+	}
+	
+	
+	/**
+	 * Mètodo rest para el requerimiento de registro 4
 	 * @param producto
 	 * @param ingredientes
 	 * @param restaurante
@@ -83,53 +135,27 @@ public class RotondAndesServices {
 		}
 		return Response.status(203).build();
 	}
+		
 	
+	/**
+	 * Método rest para el requerimiento de registro 5
+	 * @param ingrediente
+	 * @param restaurante
+	 * @return
+	 */
 	@POST
-	@Path("clientes")
-	public Response postCliente(ClientesRegistrados cliente)
+	@Path("ingredientes/{restaurante}")
+	public Response postIngrediente(Ingrediente ingrediente, @QueryParam("restaurante") String restaurante)
 	{
 		RotondAndesTM tm = new RotondAndesTM(getPath());
 		try
 		{
-			if(cliente.getUsuario() == null || cliente.getUsuario().length() < 5)
-				throw new Exception("Usuario inválido");
-			tm.registrarCliente(cliente);
-		}
-		catch (Exception e)
-		{
-			return Response.status(500).entity(doErrorMessage(e)).build();
-		}
-		return Response.status(203).build();
-	}
-	
-	@POST
-	@Path("restaurantes")
-	public Response postRestaurante(Restaurante restaurante)
-	{
-		RotondAndesTM tm = new RotondAndesTM(getPath());
-		try
-		{
-			if(restaurante.getNombre() == null || restaurante.getNombre().length() < 5)
-				throw new Exception("Usuario inválido");
-			tm.registrarRestaurante(restaurante);
-		}
-		catch (Exception e)
-		{
-			return Response.status(500).entity(doErrorMessage(e)).build();
-		}
-		return Response.status(203).build();
-	}
-	
-	@POST
-	@Path("ingredientes")
-	public Response postIngrediente(Ingrediente ingrediente)
-	{
-		RotondAndesTM tm = new RotondAndesTM(getPath());
-		try
-		{
+			if(restaurante == null || restaurante.length() < 3)
+				throw new Exception("Nombre de restaurante inválido");
 			if(ingrediente.getNombre() == null || ingrediente.getNombre().length() < 5)
 				throw new Exception("Usuario inválido");
-			tm.registrarIngrediente(ingrediente);
+			
+			tm.registrarIngrediente(ingrediente, restaurante);
 		}
 		catch (Exception e)
 		{
@@ -139,15 +165,15 @@ public class RotondAndesServices {
 	}
 	
 	@POST
-	@Path("menus")
-	public Response postMenu(Menu menu)
+	@Path("menus/{restaurante}")
+	public Response postMenu(Menu menu, List<Producto> productos, @QueryParam("restaurante") String restaurante)
 	{
 		RotondAndesTM tm = new RotondAndesTM(getPath());
 		try
 		{
 			if(menu.getNombre() == null || menu.getNombre().length() < 5)
 				throw new Exception("Usuario inválido");
-			tm.registrarMenu(menu);
+			tm.registrarMenu(menu, restaurante, productos);
 		}
 		catch (Exception e)
 		{
@@ -156,4 +182,39 @@ public class RotondAndesServices {
 		return Response.status(203).build();
 	}
 	
+	@POST
+	@Path("zonas")
+	public Response postZonas(Zona zona)
+	{
+		RotondAndesTM tm = new RotondAndesTM(getPath());
+		try
+		{
+			if(zona.getNombre() == null || zona.getNombre().length() < 5)
+				throw new Exception("Usuario inválido");
+			tm.registrarZona(zona);
+		}
+		catch (Exception e)
+		{
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(203).build();
+	}
+	
+	@POST
+	@Path("checkout")
+	public Response postCheckoutNoVerificado(CheckOut checkout, List<Restaurante_Producto> restaurProduc)
+	{
+		RotondAndesTM tm = new RotondAndesTM(getPath());
+		try
+		{
+			if(checkout.getId() < 0)
+				throw new Exception("Id del checkout inválido");
+			tm.registrarCheckout(checkout, restaurProduc);
+		}
+		catch (Exception e)
+		{
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(203).build();
+	}
 }

@@ -8,15 +8,22 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Properties;
 
+import dao.DAOCheckOut;
 import dao.DAOClientesRegistrados;
 import dao.DAOIngrediente;
+import dao.DAOMenu;
 import dao.DAOProducto;
 import dao.DAORestaurante;
 import dao.DAOTablaVideos;
+import dao.DAOZona;
+import vos.CheckOut;
 import vos.ClientesRegistrados;
 import vos.Ingrediente;
+import vos.Menu;
 import vos.Producto;
 import vos.Restaurante;
+import vos.Restaurante_Producto;
+import vos.Zona;
 
 public class RotondAndesTM {
 
@@ -246,15 +253,81 @@ public class RotondAndesTM {
 		
 	}
 
-	public void registrarIngrediente(Ingrediente ingrediente) {
+	public void registrarIngrediente(Ingrediente ingrediente, String restaurante) throws Exception{
 		
-		DAOIngrediente dao = new DAORestaurante();
+		DAOIngrediente dao = new DAOIngrediente();
 		try 
 		{
 			//////transaccion
 			this.conn = darConexion();
 			dao.setConn(conn);
-			dao.registrarIngrediente(ingrediente);
+			dao.registrarIngrediente(ingrediente, restaurante);
+			conn.commit();			
+
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				dao.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+		
+	}
+
+	public void registrarMenu(Menu menu, String restaurante, List<Producto> productos)  throws Exception{
+		
+		DAOMenu dao = new DAOMenu();
+		try 
+		{
+			//////transaccion
+			this.conn = darConexion();
+			dao.setConn(conn);
+			dao.registrarMenu(menu, restaurante, productos);
+			conn.commit();			
+
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				dao.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+		
+	}
+
+	public void registrarZona(Zona zona) throws Exception{
+		
+		DAOZona dao = new DAOZona();
+		try 
+		{
+			//////transaccion
+			this.conn = darConexion();
+			dao.setConn(conn);
+			dao.registrarZona(zona);
 			conn.commit();			
 
 		} catch (SQLException e) {
@@ -279,6 +352,39 @@ public class RotondAndesTM {
 		
 	}
 	
+	
+	public void registrarCheckout(CheckOut checkout, List<Restaurante_Producto> productos) throws Exception
+	{
+
+		DAOCheckOut dao = new DAOCheckOut();
+		try 
+		{
+			//////transaccion
+			this.conn = darConexion();
+			dao.setConn(conn);
+			dao.registrarCheckOut(checkout, productos);
+			conn.commit();			
+
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				dao.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+	}
 	
 	/*
 	 
