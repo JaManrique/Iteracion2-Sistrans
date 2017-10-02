@@ -68,6 +68,8 @@ public class RotondAndesServices {
 	 */
 	@POST
 	@Path("clientes")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response postCliente(ClientesRegistrados cliente)
 	{
 		RotondAndesTM tm = new RotondAndesTM(getPath());

@@ -52,6 +52,9 @@ public class DAOClientesRegistrados {
 	public void setConn(Connection con){
 		this.conn = con;
 	}
+	
+	private static final String COLUMNAS = "(USUARIO, CONTRASEÑA, ROL, CORREO)";
+	
 	/**
 	 * Metodo que agrega el video que entra como parametro a la base de datos.
 	 * @param prod - el video a agregar. video !=  null
@@ -62,11 +65,11 @@ public class DAOClientesRegistrados {
 	 */
 	public void registrarCliente(ClientesRegistrados prod) throws SQLException, Exception {
 
-		String sql = "INSERT INTO CLIENTESREGISTRADOS VALUES ('";
+		String sql = "INSERT INTO CLIENTESREGISTRADOS" + " VALUES ('";
 		sql += prod.getUsuario() + "','";
 		sql += prod.getContraseña() + "','";
 		sql += prod.getRol() + "','";
-		sql += prod.getCorreo()+ "';";
+		sql += prod.getCorreo()+ "')";
 		
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
