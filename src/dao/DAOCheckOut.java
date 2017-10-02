@@ -2,6 +2,7 @@ package dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +12,7 @@ import vos.ClientesRegistrados;
 import vos.Producto;
 import vos.Restaurante;
 import vos.Restaurante_Producto;
+import vos.Video;
 
 public class DAOCheckOut {
 	/**
@@ -63,14 +65,15 @@ public class DAOCheckOut {
 	 */
 	public void registrarCheckOut(CheckOut prod, List<Restaurante_Producto> lis) throws SQLException, Exception {
 		
+		String sql="";
 		for(int i=0; i<lis.size();i++)
 		{
-			Integer bool=;
-			String sql = "INSERT INTO CHECKOUT VALUES ('";
-			sql += prod.getUsuario() + "','";
-			sql += prod.getContraseña() + "','";
-			sql += prod.getRol() + "','";
-			sql += prod.getCorreo()+ "';";
+			Integer bool=disponibleProducto(lis.get(i));
+			sql+= "INSERT INTO CHECKOUT VALUES ('";
+			sql += prod.getId() + "','";
+			prod.setEntregado(bool);
+			sql += prod.getEntregado() + "','";
+			sql += prod.getTiempor()+ "');";
 		}
 		
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
@@ -78,11 +81,25 @@ public class DAOCheckOut {
 		prepStmt.executeQuery();
 
 	}
-	public Integer disponibleProducto(Producto prod)
+	public Integer disponibleProducto(Restaurante_Producto prod)throws SQLException, Exception
 	{
-		String sql = "SELECT * CHECKOUT VALUES ('";
+		Integer resp=0;
+		String sql = "SELECT * FROM PRODUCTOSBODEGA P WHERE P.NOMBRE LIKE '"+ prod.getProducto_nombre()+"' "
+				+ "AND P.INVENTARIO_RESTAURANTE_NOMBRE LIKE '"+prod.getRestaurante_nombre()+"'";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
-		prepStmt.executeQuery();
+		ResultSet rs = prepStmt.executeQuery();
+		while (rs.next()) {
+			resp = rs.getInt("CANTIDADPRODUCTO");
+		}
+		if(resp>0)
+		{
+			resp=1;
+		}
+		else 
+		{
+			resp=0;
+		}
+		return resp;
 	}
 }
