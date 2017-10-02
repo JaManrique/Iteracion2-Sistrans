@@ -142,11 +142,13 @@ public class DAOProducto {
 		sql +="INSERT INTO RESTAURANTE_PRODUCTO VALUES ('";
 		sql += nomRest + "','";
 		sql += prod.getNombre() + "');";
-		
+		sql +=  "INSERT INTO EQUIVALENCIASPRODUCTO VALUES ('";
+		sql += nomRest + "', '";
+		sql += prod.getNombre() + "');";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
-
+		
 	}
 	
 	/**
