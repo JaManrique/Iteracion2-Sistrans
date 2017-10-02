@@ -84,7 +84,7 @@ public class RotondAndesServices {
 	}
 	
 	@POST
-	@Path("cliente")
+	@Path("clientes")
 	public Response postCliente(ClientesRegistrados cliente)
 	{
 		RotondAndesTM tm = new RotondAndesTM(getPath());
@@ -93,6 +93,24 @@ public class RotondAndesServices {
 			if(cliente.getUsuario() == null || cliente.getUsuario().length() < 5)
 				throw new Exception("Usuario inválido");
 			tm.registrarCliente(cliente);
+		}
+		catch (Exception e)
+		{
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(203).build();
+	}
+	
+	@POST
+	@Path("restaurantes")
+	public Response postRestaurante(Restaurante restaurante)
+	{
+		RotondAndesTM tm = new RotondAndesTM(getPath());
+		try
+		{
+			if(restaurante.getNombre() == null || restaurante.getNombre().length() < 5)
+				throw new Exception("Usuario inválido");
+			tm.registrarRestaurante(restaurante);
 		}
 		catch (Exception e)
 		{
