@@ -85,7 +85,7 @@ public class RotondAndesServices {
 		{
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
-		return Response.status(203).build();
+		return Response.status(200).entity(cliente).build();
 	}
 	
 	/**
@@ -142,7 +142,7 @@ public class RotondAndesServices {
 		
 	
 	/**
-	 * Método rest para el requerimiento de registro 5
+	 * Método REST para el requerimiento de registro 5
 	 * @param ingrediente
 	 * @param restaurante
 	 * @return
@@ -168,6 +168,13 @@ public class RotondAndesServices {
 		return Response.status(203).build();
 	}
 	
+	/**
+	 * Método REST para ek requerimiento de registro 6
+	 * @param menu
+	 * @param productos
+	 * @param restaurante
+	 * @return
+	 */
 	@POST
 	@Path("menus/{restaurante}")
 	public Response postMenu(Menu menu, List<Producto> productos, @QueryParam("restaurante") String restaurante)
@@ -186,6 +193,12 @@ public class RotondAndesServices {
 		return Response.status(203).build();
 	}
 	
+	
+	/**
+	 * 
+	 * @param zona
+	 * @return
+	 */
 	@POST
 	@Path("zonas")
 	public Response postZonas(Zona zona)
@@ -232,7 +245,7 @@ public class RotondAndesServices {
 		
 		System.out.println("sieze:" + prueba.size());
 		
-		return Response.status(203).entity((List<Ingrediente>)prueba).build();
+		return Response.status(200).entity((List<Ingrediente>)prueba).build();
 	}
 	
 	private List<Ingrediente> parseProductoIngrediente(List<ProductoIngredientes> objetos)
