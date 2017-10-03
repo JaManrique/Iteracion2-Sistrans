@@ -161,9 +161,35 @@ public class DAOZona {
 			productos.add(new Producto(nombre, categoria, precioVenta, costosProduccion, tipoComidaProd,tiempoDePreparacion));
 		}
 		
-		String sql2="SELECT * FROM (CHECKOUT C INNER JOIN PRODUCTO_CHECKOUT PC ON C.ID=PC.CHECKOUT_ID) WHERE ZONA_NOMBRE= '"+ Nzona+"'";
+		String sql2="SELECT * FROM ZONA WHERE ZONA_NOMBRE= '"+ Nzona+"'";
+		if(filtrosContiene(columnafiltro)&&compContiene(compfiltro)) {
+			if(esCompString(filtro,compfiltro)) 
+			{
+				sql2+="AND "+columnafiltro+" LIKE "+ compString(filtro,compfiltro);
+			}
+			else
+			{
+				sql2+="AND "+columnafiltro+" "+compfiltro+" "+filtro;
+
+			}
+			if(agruparPor!=null&& ordenContiene(agruparPor))
+			{
+				sql2+=" ORDER BY "+agruparPor;
+				if(orden!=null&&(orden.equals(ASCENDENTE)||orden.equals(DESCENDENTE)))
+				{
+					sql2+=" "+orden;
+				}
+			}
+		}
+		PreparedStatement prepStmt2 = conn.prepareStatement(sql2);
+		recursos.add(prepStmt2);
+		ResultSet rs2 = prepStmt.executeQuery();
+		String nom=rs.getString("NOMBRE");
+		Integer cap=rs.getInt("CAPACIDAD");
+		ZonaCompra consulta=new ZonaCompra(nom,cap);
+		consulta.setChecksO(productos);
 		
-		return productos;
+		return consulta;
 	}	
 	private String compString(String filtro, String compfiltro) throws Exception {
 		// TODO Auto-generated method stub
