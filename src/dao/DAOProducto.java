@@ -12,6 +12,59 @@ import vos.Producto;
 import vos.Video;
 
 public class DAOProducto {
+	//constantes
+	public static final String FILTRAR_POR_NOMBRE = "NOMBRE";
+	public static final String FILTRAR_POR_CATEGORIA = "CATEGORIA";
+	public static final String FILTRAR_POR_PRECIO_DE_VENTA = "PRECIOVENTA";
+	public static final String FILTRAR_POR_COSTO_DE_PRODUCCION = "COSTOPRODUCCION";
+	public static final String FILTRAR_POR_TIPO_DE_COMIDA = "TIPOCOMIDAPROD";
+	public static final String FILTRAR_POR_TIEMPO_DE_PREPARACION = "TIEMPOPREPARACION";
+	static String[] filtros = new String[] {
+			FILTRAR_POR_NOMBRE,
+			FILTRAR_POR_CATEGORIA,
+			FILTRAR_POR_PRECIO_DE_VENTA,
+			FILTRAR_POR_COSTO_DE_PRODUCCION,
+			FILTRAR_POR_TIPO_DE_COMIDA,
+			FILTRAR_POR_TIEMPO_DE_PREPARACION
+	};
+
+	public static final String ASCENDENTE = "ASC";
+	public static final String DESCENDENTE = "DESC";
+
+	public static final String ORDENAR_POR_NOMBRE = "NOMBRE";
+	public static final String ORDENAR_POR_CATEGORIA = "CATEGORIA";
+	public static final String ORDENAR_POR_PRECIO_DE_VENTA = "PRECIOVENTA";
+	public static final String ORDENAR_POR_COSTO_DE_PRODUCCION = "COSTOPRODUCCION";
+	public static final String ORDENAR_POR_TIPO_DE_COMIDA = "TIPOCOMIDAPROD";
+	public static final String ORDENAR_POR_TIEMPO_DE_PREPARACION = "TIEMPOPREPARACION";
+	static String[] criteriosOrdenamiento = new String[] {
+			ORDENAR_POR_NOMBRE,
+			ORDENAR_POR_CATEGORIA,
+			ORDENAR_POR_PRECIO_DE_VENTA,
+			ORDENAR_POR_COSTO_DE_PRODUCCION,
+			ORDENAR_POR_TIPO_DE_COMIDA,
+			ORDENAR_POR_TIEMPO_DE_PREPARACION
+	};
+	public static final String MENOR_O_IGUAL = "<=";
+	public static final String MENOR = "<";
+	public static final String MAYOR_O_IGUAL = ">=";
+	public static final String MAYOR = ">";
+	public static final String IGUAL = "=";
+	public static final String COMIENZA_CON = "1";
+	public static final String TERMINA_CON = "2";
+	public static final String CONTIENE = "3";
+	
+	public static String[] comparadores = {
+			MENOR_O_IGUAL,
+			MENOR,
+			MAYOR,
+			MAYOR_O_IGUAL,
+			IGUAL,
+			COMIENZA_CON,
+			TERMINA_CON,
+			CONTIENE			
+	};
+
 	/**
 	 * Arraylits de recursos que se usan para la ejecución de sentencias SQL
 	 */
@@ -82,6 +135,111 @@ public class DAOProducto {
 		return productos;
 	}
 
+	public ArrayList<Producto> darProductosCriterio(String filtro, String columnafiltro,String compfiltro, String agruparPor, String orden) throws SQLException, Exception {
+		ArrayList<Producto> productos = new ArrayList<Producto>();
+		String sql = "SELECT * FROM PRODUCTO P";
+		if(filtrosContiene(columnafiltro)&&compContiene(compfiltro)) {
+			if(esCompString(filtro,compfiltro)) 
+			{
+				sql+="WHERE P."+columnafiltro+" LIKE "+ compString(filtro,compfiltro);
+			}
+			else
+			{
+				sql+="WHERE P."+columnafiltro+" "+compfiltro+" "+filtro;
+
+			}
+			if(agruparPor!=null&& ordenContiene(agruparPor))
+			{
+				sql+=" ORDER BY "+agruparPor;
+				if(orden!=null&&(orden.equals(ASCENDENTE)||orden.equals(DESCENDENTE)))
+				{
+					sql+=" "+orden;
+				}
+			}
+		}
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+
+		while (rs.next()) {
+			String nombre = rs.getString("NOMBRE");
+			Integer categoria = rs.getInt("CATEGORIA");
+			Integer precioVenta = rs.getInt("PRECIOVENTA");
+			Integer costosProduccion = rs.getInt("COSTOPRODUCCION");
+			String tipoComidaProd = rs.getString("TIPOCOMIDAPROD");
+			Integer tiempoDePreparacion = rs.getInt("TIEMPOPREPARACION");
+			productos.add(new Producto(nombre, categoria, precioVenta, costosProduccion, tipoComidaProd,tiempoDePreparacion));
+		}
+		return productos;
+	}
+
+	private String compString(String filtro, String compfiltro) throws Exception {
+		// TODO Auto-generated method stub
+		String resp;
+		if(compfiltro.equals(CONTIENE))
+		{
+			resp="'%"+filtro+"%'";
+		}
+		else if(compfiltro.equals(COMIENZA_CON))
+		{
+		resp="'"+filtro+"%'";
+
+		}
+		else if(compfiltro.equals(TERMINA_CON))
+		{
+			resp="'%"+filtro+"'";
+
+		}
+		else
+			throw new Exception("ComparadorInvalido");
+		
+		return resp;
+	}
+
+	private boolean esCompString(String filtro, String compfiltro) {
+		// TODO Auto-generated method stub
+		boolean esCompString=false;
+		try 
+		{			
+			Double.parseDouble(filtro);
+		}
+		catch(Exception e)
+		{
+			esCompString=true;			
+		}
+		if(compfiltro.equals(COMIENZA_CON)||compfiltro.equals(TERMINA_CON)||compfiltro.equals(CONTIENE))
+		{
+			esCompString=true;
+		}
+		return esCompString;
+	}
+
+	private boolean filtrosContiene(String filtro) {
+		// TODO Auto-generated method stub
+		for (int i = 0; i < filtros.length; i++) {
+			if(filtros[i].equals(filtro))
+				return true;
+		}
+		return false;
+	}
+
+	private boolean ordenContiene(String filtro) {
+		// TODO Auto-generated method stub
+		for (int i = 0; i < criteriosOrdenamiento.length; i++) {
+			if(criteriosOrdenamiento[i].equals(filtro))
+				return true;
+		}
+		return false;
+	}
+	private boolean compContiene(String comp) {
+		// TODO Auto-generated method stub
+		for (int i = 0; i < comparadores.length; i++) {
+			if(comparadores[i].equals(comp))
+				return true;
+		}
+		return false;
+	}
 
 	/**
 	 * Metodo que busca el/los videos con el nombre que entra como parametro.
@@ -111,7 +269,7 @@ public class DAOProducto {
 
 		return productos;
 	}
-	
+
 
 	/**
 	 * Metodo que agrega el video que entra como parametro a la base de datos.
@@ -148,9 +306,9 @@ public class DAOProducto {
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
-		
+
 	}
-	
+
 	/**
 	 * Metodo que actualiza el video que entra como parametro en la base de datos.
 	 * @param video - el video a actualizar. video !=  null
