@@ -1,5 +1,6 @@
 package rest;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
@@ -24,6 +25,7 @@ import vos.Producto;
 import vos.Restaurante;
 import vos.Restaurante_Producto;
 import vos.Zona;
+import vosContainers.ProductoIngredientes;
 
 @Path("rotonda")
 public class RotondAndesServices {
@@ -154,8 +156,8 @@ public class RotondAndesServices {
 		{
 			if(restaurante == null || restaurante.length() < 3)
 				throw new Exception("Nombre de restaurante inválido");
-			if(ingrediente.getNombre() == null || ingrediente.getNombre().length() < 5)
-				throw new Exception("Usuario inválido");
+			if(ingrediente.getNombre() == null || ingrediente.getNombre().length() < 4)
+				throw new Exception("Nombre de ingrediente inválido");
 			
 			tm.registrarIngrediente(ingrediente, restaurante);
 		}
@@ -174,7 +176,7 @@ public class RotondAndesServices {
 		try
 		{
 			if(menu.getNombre() == null || menu.getNombre().length() < 5)
-				throw new Exception("Usuario inválido");
+				throw new Exception("Nombre de menú inválido");
 			tm.registrarMenu(menu, restaurante, productos);
 		}
 		catch (Exception e)
@@ -192,7 +194,7 @@ public class RotondAndesServices {
 		try
 		{
 			if(zona.getNombre() == null || zona.getNombre().length() < 5)
-				throw new Exception("Usuario inválido");
+				throw new Exception("Nombre de zona inválido");
 			tm.registrarZona(zona);
 		}
 		catch (Exception e)
@@ -218,5 +220,33 @@ public class RotondAndesServices {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
 		return Response.status(203).build();
+	}
+	
+	@POST
+	@Path("test")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response test(List<ProductoIngredientes> objetos)
+	{
+		List<Ingrediente> prueba = parseProductoIngrediente(objetos);
+		
+		System.out.println("sieze:" + prueba.size());
+		
+		return Response.status(203).entity((List<Ingrediente>)prueba).build();
+	}
+	
+	private List<Ingrediente> parseProductoIngrediente(List<ProductoIngredientes> objetos)
+	{
+		List<Ingrediente> resp = new ArrayList<>();
+		
+		for (ProductoIngredientes obj: objetos)
+		{
+			if(obj.getIsIngrediente() != null && obj.getIsIngrediente())
+			{
+				Ingrediente ing = new Ingrediente(obj.getNombreIng(), obj.getDescEsp(), obj.getDescING(), obj.getTipo());
+				resp.add(ing);
+			}
+		}
+		return resp;
 	}
 }
