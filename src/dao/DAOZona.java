@@ -1,5 +1,6 @@
 package dao;
 
+import java.awt.List;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -149,17 +150,29 @@ public class DAOZona {
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
-		ResultSet rs = prepStmt.executeQuery();
-
-		while (rs.next()) {
-			String nombre = rs.getString("NOMBRE");
-			Integer categoria = rs.getInt("CATEGORIA");
-			Integer precioVenta = rs.getInt("PRECIOVENTA");
-			Integer costosProduccion = rs.getInt("COSTOPRODUCCION");
-			String tipoComidaProd = rs.getString("TIPOCOMIDAPROD");
-			Integer tiempoDePreparacion = rs.getInt("TIEMPOPREPARACION");
-			productos.add(new Producto(nombre, categoria, precioVenta, costosProduccion, tipoComidaProd,tiempoDePreparacion));
+		ResultSet rs1 = prepStmt.executeQuery();
+		ArrayList<String> pnombres=new ArrayList();
+		while(rs1.next())
+		{
+			String pnombre=rs1.getString("PRODUCTO_NOMBRE");
+			pnombres.add(pnombre);
 		}
+		for (int i = 0; i < pnombres.size(); i++) {
+			String sqlp="SELECT * FROM PRODUCTO P PWHER P.NOMBRE LIKE"+pnombres.get(i);
+			PreparedStatement prepStmtf = conn.prepareStatement(sqlp);
+			recursos.add(prepStmtf);
+			ResultSet rs = prepStmtf.executeQuery();
+			while (rs.next()) {
+				String nombre = rs.getString("NOMBRE");
+				Integer categoria = rs.getInt("CATEGORIA");
+				Integer precioVenta = rs.getInt("PRECIOVENTA");
+				Integer costosProduccion = rs.getInt("COSTOPRODUCCION");
+				String tipoComidaProd = rs.getString("TIPOCOMIDAPROD");
+				Integer tiempoDePreparacion = rs.getInt("TIEMPOPREPARACION");
+				productos.add(new Producto(nombre, categoria, precioVenta, costosProduccion, tipoComidaProd,tiempoDePreparacion));
+			}
+		}		
+		
 		
 		String sql2="SELECT * FROM ZONA WHERE ZONA_NOMBRE= '"+ Nzona+"'";
 		if(filtrosContiene(columnafiltro)&&compContiene(compfiltro)) {
