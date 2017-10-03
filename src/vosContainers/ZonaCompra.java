@@ -5,6 +5,7 @@ import java.util.List;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 import vos.CheckOut;
+import vos.Producto;
 
 public class ZonaCompra
 {
@@ -14,7 +15,9 @@ public class ZonaCompra
 	@JsonProperty(value="capacidad")
 	private Integer capacidad;
 	
-	private List<CheckOut> checksO;
+	private List<Producto> prods;
+	
+	
 	
 	public ZonaCompra(@JsonProperty(value="nombre")String pNom,@JsonProperty(value="capacidad")Integer ctrn) {
 		super();
@@ -38,12 +41,12 @@ public class ZonaCompra
 		this.capacidad = capacidad;
 	}
 
-	public List<CheckOut> getChecksO() {
-		return checksO;
+	public List<Producto> getChecksO() {
+		return prods;
 	}
 
-	public void setChecksO(List<CheckOut> checksO) {
-		this.checksO = checksO;
+	public void setChecksO(List<Producto> checksO) {
+		this.prods = checksO;
 	}
 	
 }
