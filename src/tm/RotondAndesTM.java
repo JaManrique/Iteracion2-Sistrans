@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -14,16 +15,19 @@ import dao.DAOIngrediente;
 import dao.DAOMenu;
 import dao.DAOProducto;
 import dao.DAORestaurante;
-import dao.DAOTablaVideos;
 import dao.DAOZona;
 import vos.CheckOut;
-import vos.ClientesRegistrados;
+import vos.Usuario;
 import vos.Ingrediente;
 import vos.Menu;
 import vos.Producto;
 import vos.Restaurante;
 import vos.Restaurante_Producto;
 import vos.Zona;
+import vosContainers.MenuProductos;
+import vosContainers.ProductoIngredientes;
+import vosContainers.ProductosServidos;
+import vosContainers.RegistroCliente;
 
 public class RotondAndesTM {
 
@@ -154,9 +158,25 @@ public class RotondAndesTM {
 	 * @param restaurante
 	 * @throws Exception
 	 */
-	public void registrarProducto(Producto producto, List<Ingrediente> ingredientes, String restaurante) throws Exception
+	public void registrarProducto(List<ProductoIngredientes> objetos, String restaurante) throws Exception
 	{
 		DAOProducto daoProducto = new DAOProducto();
+		
+		List<Ingrediente> ingredientes = parseProductoIngrediente(objetos);
+		Producto producto = null;
+		
+		for(ProductoIngredientes obj : objetos)
+		{
+			if(obj.getIsProducto() != null && obj.getIsProducto())
+			{
+				producto = new Producto(obj.getNombre(), obj.getCategoria(), obj.getPrecioVenta(), obj.getCostosDeProduccion(), obj.getTipoComidaProd(), obj.getTiempoPreparacion());
+				break;
+			}
+		}
+		
+		if (producto == null)
+			throw new Exception("El producto no es válido");
+		
 		try 
 		{
 			//////transaccion
@@ -186,7 +206,41 @@ public class RotondAndesTM {
 		}
 	}
 
-	public void registrarCliente(ClientesRegistrados cliente) throws Exception{
+	public void registrarUsuario(Usuario cliente) throws Exception{
+		
+		DAOClientesRegistrados daoCllienteRegistrados = new DAOClientesRegistrados();
+		try 
+		{
+			
+			//////transaccion
+			this.conn = darConexion();
+			daoCllienteRegistrados.setConn(conn);
+			daoCllienteRegistrados.registrarUsuario(cliente);
+			conn.commit();
+
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoCllienteRegistrados.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+		
+	}
+
+	public void registrarCliente(RegistroCliente cliente) throws Exception {
 		
 		DAOClientesRegistrados daoCllienteRegistrados = new DAOClientesRegistrados();
 		try 
@@ -286,15 +340,29 @@ public class RotondAndesTM {
 		
 	}
 
-	public void registrarMenu(Menu menu, String restaurante, List<Producto> productos)  throws Exception{
+	public void registrarMenu(List<MenuProductos> objetos)  throws Exception{
 		
 		DAOMenu dao = new DAOMenu();
+		
+		List<String> nombreProductos = parseMenuProducto(objetos);
+		Menu menu = null;
+		
+		for(MenuProductos obj : objetos)
+		{
+			if(obj.getIsMenu() != null && obj.getIsMenu())
+			{
+				menu = new Menu(obj.getNombre(), obj.getCategoria(), obj.getPrecioVenta(), obj.getCostosProduccion(), obj.getTipoComidaProd(), obj.getTiempoPreparacion(), obj.getRestaurante_nombre());
+			}
+		}
+		
+		if(menu == null)
+			throw new Exception("No se encontró un menù");
 		try 
 		{
 			//////transaccion
 			this.conn = darConexion();
 			dao.setConn(conn);
-			dao.registrarMenu(menu, restaurante, productos);
+			dao.registrarMenu(menu, menu.getRestaurante_nombre(), nombreProductos);
 			conn.commit();			
 
 		} catch (SQLException e) {
@@ -384,6 +452,74 @@ public class RotondAndesTM {
 				throw exception;
 			}
 		}
+	}
+	
+
+
+	public List<Producto> consultarProductos(ProductosServidos infQuery) throws Exception{
+		
+		DAOProducto dao = new DAOProducto();
+		
+		List<Producto> productos = new ArrayList<>();
+		
+		try 
+		{
+			//////transaccion
+			this.conn = darConexion();
+			dao.setConn(conn);
+			productos = dao.darProductosCriterio(infQuery.getFiltro(), infQuery.getColumnaFiltro(), infQuery.getCompFiltro(), infQuery.getAgruparPor(), infQuery.getOrden());		
+
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				dao.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+		
+		return productos;
+		
+	}
+	
+	private List<Ingrediente> parseProductoIngrediente(List<ProductoIngredientes> objetos) throws Exception
+	{
+		List<Ingrediente> resp = new ArrayList<>();
+		
+		for (ProductoIngredientes obj: objetos)
+		{
+			if(obj.getIsIngrediente() != null && obj.getIsIngrediente())
+			{
+				Ingrediente ing = new Ingrediente(obj.getNombreIng(), obj.getDescEsp(), obj.getDescING(), obj.getTipo());
+				resp.add(ing);
+			}
+		}
+		return resp;
+	}
+	
+	private List<String> parseMenuProducto(List<MenuProductos> objetos) throws Exception
+	{
+		List<String> resp = new ArrayList<>();
+		
+		for (MenuProductos obj: objetos)
+		{
+			if(obj.getIsProducto() != null && obj.getIsProducto())
+			{
+				resp.add(obj.getProductoNombre());
+			}
+		}
+		return resp;
 	}
 	
 	/*

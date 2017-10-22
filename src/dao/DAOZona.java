@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import vos.CheckOut;
-import vos.ClientesRegistrados;
+import vos.Usuario;
 import vos.Producto;
 import vos.Zona;
 import vosContainers.ZonaCompra;
@@ -158,7 +158,7 @@ public class DAOZona {
 			pnombres.add(pnombre);
 		}
 		for (int i = 0; i < pnombres.size(); i++) {
-			String sqlp="SELECT * FROM PRODUCTO P PWHER P.NOMBRE LIKE"+pnombres.get(i);
+			String sqlp="SELECT * FROM PRODUCTO P WHERE P.NOMBRE LIKE"+pnombres.get(i);
 			PreparedStatement prepStmtf = conn.prepareStatement(sqlp);
 			recursos.add(prepStmtf);
 			ResultSet rs = prepStmtf.executeQuery();
@@ -197,8 +197,8 @@ public class DAOZona {
 		PreparedStatement prepStmt2 = conn.prepareStatement(sql2);
 		recursos.add(prepStmt2);
 		ResultSet rs2 = prepStmt.executeQuery();
-		String nom=rs.getString("NOMBRE");
-		Integer cap=rs.getInt("CAPACIDAD");
+		String nom=rs2.getString("NOMBRE");
+		Integer cap=rs2.getInt("CAPACIDAD");
 		ZonaCompra consulta=new ZonaCompra(nom,cap);
 		consulta.setChecksO(productos);
 		

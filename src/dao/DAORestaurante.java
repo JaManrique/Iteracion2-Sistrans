@@ -5,7 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import vos.ClientesRegistrados;
+import vos.Usuario;
 import vos.Restaurante;
 
 public class DAORestaurante {
@@ -63,11 +63,14 @@ public class DAORestaurante {
 		sql += prod.getNombre() + "','";
 		sql += prod.getDescripcion() + "','";
 		sql += prod.getTipoComidaRest() + "','";
-		sql += prod.getPaginaWeb()+ "';";
+		sql += prod.getPaginaWeb()+ "')";
 		
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
-
+		
+		sql = "INSERT INTO INVENTARIO VALUES ('" + prod.getNombre() + "')";
+		prepStmt = conn.prepareStatement(sql);
+		prepStmt.executeQuery();
 	}
 }

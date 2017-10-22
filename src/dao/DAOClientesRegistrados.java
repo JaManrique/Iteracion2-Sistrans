@@ -2,11 +2,13 @@ package dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import vos.ClientesRegistrados;
+import vos.Usuario;
+import vosContainers.RegistroCliente;
 import vos.Ingrediente;
 import vos.Producto;
 
@@ -52,9 +54,9 @@ public class DAOClientesRegistrados {
 	public void setConn(Connection con){
 		this.conn = con;
 	}
-	
+
 	private static final String COLUMNAS = "(USUARIO, CONTRASEÑA, ROL, CORREO)";
-	
+
 	/**
 	 * Metodo que agrega el video que entra como parametro a la base de datos.
 	 * @param prod - el video a agregar. video !=  null
@@ -63,17 +65,64 @@ public class DAOClientesRegistrados {
 	 * @throws SQLException - Cualquier error que la base de datos arroje. No pudo agregar el video a la base de datos
 	 * @throws Exception - Cualquier error que no corresponda a la base de datos
 	 */
-	public void registrarCliente(ClientesRegistrados prod) throws SQLException, Exception {
+	public void registrarUsuario(Usuario prod) throws SQLException, Exception {
 
-		String sql = "INSERT INTO CLIENTESREGISTRADOS" + " VALUES ('";
+		if(prod.getRol().equals("cliente"))
+			throw new Exception("Debe registrar un cliente desde la URL clientes");
+
+		String sql = "INSERT INTO USUARIO " + " VALUES ('";
 		sql += prod.getUsuario() + "','";
 		sql += prod.getContraseña() + "','";
 		sql += prod.getRol() + "','";
 		sql += prod.getCorreo()+ "')";
-		
+
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
+
+	}
+
+	public void registrarCliente(RegistroCliente cliente) throws SQLException, Exception {
+
+		String correctPass = "";
+
+		String sqlVerif = "SELECT * FROM USUARIO U WHERE U.USUARIO = '" + cliente.getAdminUser() + "'";
+
+		PreparedStatement prepVerifStmt = conn.prepareStatement(sqlVerif);
+		recursos.add(prepVerifStmt);
+		ResultSet rsverif = prepVerifStmt.executeQuery();
+
+		if(rsverif.next()) 
+		{
+			correctPass = rsverif.getString("CONTRASEÑA");
+		}
+		else
+			throw new Exception("Usuario inválido");
+
+		if(correctPass.equals(cliente.getAdminPass()))
+		{
+
+			String sql = "INSERT INTO USUARIO " + " VALUES ('";
+			sql += cliente.getUsuario() + "','";
+			sql += cliente.getContraseña() + "','";
+			sql += cliente.getRol() + "','";
+			sql += cliente.getCorreo()+ "')";
+
+			PreparedStatement prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			prepStmt.executeQuery();
+			
+			//Insertar en otra tabla
+			sql = "INSERT INTO CLIENTESREGISTRADOS VALUES ('" + cliente.getUsuario() +"')";
+			prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			prepStmt.executeQuery();
+		}
+		else
+		{
+			throw new Exception("Contraseña incorrecta");
+		}
+
 
 	}
 }

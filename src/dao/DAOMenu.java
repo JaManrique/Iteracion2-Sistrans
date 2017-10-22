@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import vos.ClientesRegistrados;
+import vos.Usuario;
 import vos.Ingrediente;
 import vos.Menu;
 import vos.Producto;
@@ -54,32 +54,34 @@ public class DAOMenu {
 	}
 	/**
 	 * Metodo que agrega el video que entra como parametro a la base de datos.
-	 * @param prod - el video a agregar. video !=  null
+	 * @param menu - el video a agregar. video !=  null
 	 * <b> post: </b> se ha agregado el video a la base de datos en la transaction actual. pendiente que el video master
 	 * haga commit para que el video baje  a la base de datos.
 	 * @throws SQLException - Cualquier error que la base de datos arroje. No pudo agregar el video a la base de datos
 	 * @throws Exception - Cualquier error que no corresponda a la base de datos
 	 */
-	public void registrarMenu(Menu prod, String nomRest, List<Producto> ingr) throws SQLException, Exception {
+	public void registrarMenu(Menu menu, String nomRest, List<String> productos) throws SQLException, Exception {
 
 		String sql = "INSERT INTO MENU VALUES ('";
-		sql += prod.getNombre() + "',";
-		sql += prod.getCategoria() + ",";
-		sql += prod.getPrecioVenta() + ",";
-		sql += prod.getCostosProduccion() + ",'";
-		sql += prod.getTipoComidaProd() + "',";
-		sql += prod.getTiempoPreparacion() + ",'";
-		sql += nomRest +"');";
+		sql += menu.getNombre() + "',";
+		sql += menu.getCategoria() + ",";
+		sql += menu.getPrecioVenta() + ",";
+		sql += menu.getCostosProduccion() + ",'";
+		sql += menu.getTipoComidaProd() + "',";
+		sql += menu.getTiempoPreparacion() + ",'";
+		sql += nomRest +"')";
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		prepStmt.executeQuery();
 		
-		for (int i = 0; i < ingr.size(); i++) {
-			sql +="INSERT INTO PRODUCTO_MENU VALUES ('";
-			sql +=prod.getNombre()  + "','";
-			sql +=ingr.get(i).getNombre() + "');";
+		for (int i = 0; i < productos.size(); i++) {
+			sql ="INSERT INTO PRODUCTO_MENU VALUES ('";
+			sql +=menu.getNombre()  + "','";
+			sql +=productos.get(i) + "')";
+			prepStmt = conn.prepareStatement(sql);
+			prepStmt.execute();
 		}
 		
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
-		recursos.add(prepStmt);
-		prepStmt.executeQuery();
 		
 	}
 }

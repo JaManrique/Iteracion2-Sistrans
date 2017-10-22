@@ -8,11 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import vos.CheckOut;
-import vos.ClientesRegistrados;
+import vos.Usuario;
 import vos.Producto;
 import vos.Restaurante;
 import vos.Restaurante_Producto;
-import vos.Video;
 
 public class DAOCheckOut {
 	/**

@@ -7,9 +7,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.sun.scenario.effect.impl.state.PerspectiveTransformState;
+
 import vos.Ingrediente;
 import vos.Producto;
-import vos.Video;
 
 public class DAOProducto {
 	//constantes
@@ -288,63 +289,39 @@ public class DAOProducto {
 		sql += prod.getCostosDeProduccion() + ",'";
 		sql += prod.getTipoComidaProd() + "',";
 		sql += prod.getTiempoDePreparacion() + ")";
-		sql += ";"+ "INSERT INTO PRODUCTOSBODEGA VALUES (";
-		sql += 1 + ",'";
-		sql += nomRest + "',";
-		sql += prod.getNombre() + "');";
-		for (int i = 0; i < ingr.size(); i++) {
-			sql +="INSERT INTO PRODUCTO_INGREDIENTE VALUES ('";
-			sql += ingr.get(i).getNombre() + "','";
-			sql += prod.getNombre() + "');";
-		}
-		sql +="INSERT INTO RESTAURANTE_PRODUCTO VALUES ('";
-		sql += nomRest + "','";
-		sql += prod.getNombre() + "');";
-		sql +=  "INSERT INTO EQUIVALENCIASPRODUCTO VALUES ('";
+		
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		prepStmt.executeQuery();
+		
+		sql = "INSERT INTO PRODUCTOSBODEGA VALUES ( ?,'";
 		sql += nomRest + "', '";
-		sql += prod.getNombre() + "');";
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
-		recursos.add(prepStmt);
+		sql += prod.getNombre() + "')";
+		
+		prepStmt = conn.prepareStatement(sql);
+		prepStmt.setInt(1, 1);
+		prepStmt.execute();
+		
+		for (int i = 0; i < ingr.size(); i++) {
+			sql ="INSERT INTO PRODUCTO_INGREDIENTE VALUES ('";
+			sql += ingr.get(i).getNombre() + "','";
+			sql += prod.getNombre() + "')";
+			prepStmt = conn.prepareStatement(sql);
+			prepStmt.executeQuery();
+		}
+		
+		sql ="INSERT INTO RESTAURANTE_PRODUCTO VALUES ('";
+		sql += nomRest + "','";
+		sql += prod.getNombre() + "')";
+		prepStmt = conn.prepareStatement(sql);
 		prepStmt.executeQuery();
-
-	}
-
-	/**
-	 * Metodo que actualiza el video que entra como parametro en la base de datos.
-	 * @param video - el video a actualizar. video !=  null
-	 * <b> post: </b> se ha actualizado el video en la base de datos en la transaction actual. pendiente que el video master
-	 * haga commit para que los cambios bajen a la base de datos.
-	 * @throws SQLException - Cualquier error que la base de datos arroje. No pudo actualizar el video.
-	 * @throws Exception - Cualquier error que no corresponda a la base de datos
-	 */
-	public void updateVideo(Video video) throws SQLException, Exception {
-
-		String sql = "UPDATE VIDEO SET ";
-		sql += "NAME='" + video.getName() + "',";
-		sql += "DURATION=" + video.getDuration();
-		sql += " WHERE ID = " + video.getId();
-
-
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
-		recursos.add(prepStmt);
+		
+		sql =  "INSERT INTO EQUIVALENCIASPRODUCTO VALUES ('";
+		sql += nomRest + "', '";
+		sql += prod.getNombre() + "')";
+		prepStmt = conn.prepareStatement(sql);
 		prepStmt.executeQuery();
-	}
-
-	/**
-	 * Metodo que elimina el video que entra como parametro en la base de datos.
-	 * @param video - el video a borrar. video !=  null
-	 * <b> post: </b> se ha borrado el video en la base de datos en la transaction actual. pendiente que el video master
-	 * haga commit para que los cambios bajen a la base de datos.
-	 * @throws SQLException - Cualquier error que la base de datos arroje. No pudo actualizar el video.
-	 * @throws Exception - Cualquier error que no corresponda a la base de datos
-	 */
-	public void deleteVideo(Video video) throws SQLException, Exception {
-
-		String sql = "DELETE FROM VIDEO";
-		sql += " WHERE ID = " + video.getId();
-
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		
 		recursos.add(prepStmt);
-		prepStmt.executeQuery();
+
 	}
 }

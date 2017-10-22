@@ -63,14 +63,16 @@ public class DAOIngrediente {
 		sql += prod.getNombre() + "','";
 		sql += prod.getDescEsp() + "','";
 		sql += prod.getDescING() + "','";
-		sql += prod.getTipo()+ "';";
-		sql += "INSERT INTO EQUIVALENCIASINGREDIENTE VALUES ('";
-		sql += prod.getNombre() + "','";
-		sql += rest+ "');";
-
+		sql += prod.getTipo()+ "')";
 		
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
-		recursos.add(prepStmt);
+		prepStmt.executeQuery();
+		
+		sql = "INSERT INTO EQUIVALENCIASINGREDIENTE VALUES ('";
+		sql += prod.getNombre() + "','";
+		sql += rest+ "')";
+		
+		prepStmt = conn.prepareStatement(sql);
 		prepStmt.executeQuery();
 
 	}

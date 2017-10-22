@@ -9,14 +9,14 @@ public class Ingrediente {
 	@JsonProperty(value="descEsp")
 	private String descEsp;
 	
-	@JsonProperty(value="descING")
+	@JsonProperty(value="descIng")
 	private String descING;
 	
 	@JsonProperty(value="tipo")
 	private String tipo;
 	
 	public Ingrediente(@JsonProperty(value="nombre")String pNom,@JsonProperty(value="descEsp")String pdescEsp,
-			@JsonProperty(value="descING")String pdescING,@JsonProperty(value="tipo")String ptipo) {
+			@JsonProperty(value="descIng")String pdescING,@JsonProperty(value="tipo")String ptipo) {
 		super();
 		nombre=pNom;
 		descEsp=pdescEsp;
