@@ -11,6 +11,7 @@ import com.sun.scenario.effect.impl.state.PerspectiveTransformState;
 
 import vos.Ingrediente;
 import vos.Producto;
+import vos.Restaurante;
 
 public class DAOProducto {
 	//constantes
@@ -315,13 +316,15 @@ public class DAOProducto {
 		prepStmt = conn.prepareStatement(sql);
 		prepStmt.executeQuery();
 		
-		sql =  "INSERT INTO EQUIVALENCIASPRODUCTO VALUES ('";
-		sql += nomRest + "', '";
-		sql += prod.getNombre() + "')";
-		prepStmt = conn.prepareStatement(sql);
-		prepStmt.executeQuery();
-		
 		recursos.add(prepStmt);
 
+	}
+	public void registrarEquivalenciaDeProducto(Ingrediente ing1, Ingrediente ing2, Restaurante restaurante, String usuario, String contr)throws SQLException, Exception 
+	{
+		
+		String sql1 = "INSERT INTO EQUIVALENCIASPRODUCTO VALUES ('";
+		sql1+=ing1.getNombre()+"','";
+		sql1 += restaurante.getNombre() + "','";
+		sql1+= ing2.getNombre() + "';";
 	}
 }
