@@ -2,9 +2,12 @@ package dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import vos.Producto;
+import vos.ProductosBodega;
 import vos.Usuario;
 import vos.Restaurante;
 
@@ -72,5 +75,36 @@ public class DAORestaurante {
 		sql = "INSERT INTO INVENTARIO VALUES ('" + prod.getNombre() + "')";
 		prepStmt = conn.prepareStatement(sql);
 		prepStmt.executeQuery();
+	}
+	public void surtirRestaurante(Restaurante rest) throws SQLException, Exception
+	{
+		ArrayList<ProductosBodega> productos=darProductosRestaurante(rest);
+		String sql="";
+		for (int i = 0; i < productos.size(); i++)
+		{
+			 sql+= "UPDATE PRODUCTOSBODEGA P SET CANTIDADPRODUCTO="+productos.get(i).getMaximo();
+			 sql+=" WHERE P.PRODUCTO_NOMBRE LIKE '"+productos.get(i).getNombreProd()+"' AND P.INVENTARIO_RESTAURANTE_NOMBRE LIKE '"+productos.get(i).getNombreRest()+"';";			
+		}
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		prepStmt.executeQuery();
+	}
+	public ArrayList<ProductosBodega> darProductosRestaurante(Restaurante rest)throws SQLException, Exception
+	{
+		ArrayList<ProductosBodega> productos = new ArrayList<ProductosBodega>();
+		String sql = "SELECT * FROM PRODUCTOSBODEGA P";
+		sql+="WHERE P.INVENTARIO_RESTAURANTE_NOMBRE LIKE "+ "'"+rest.getNombre()+"'";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+		
+		while (rs.next()) {
+			String nombreRest = rs.getString("INVENTARIO_RESTAURANTE_NOMBRE");
+			String nombreProd = rs.getString("PRODUCTO_NOMBRE");
+			Integer cantProd = rs.getInt("CANTIDADPRODUCTO");
+			Integer max = rs.getInt("MAXIMO");
+			productos.add(new ProductosBodega(nombreRest, nombreProd, cantProd, max));
+		}
+		return productos;
 	}
 }
