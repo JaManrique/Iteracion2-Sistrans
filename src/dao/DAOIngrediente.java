@@ -74,6 +74,9 @@ public class DAOIngrediente {
 		sql1+=ing1.getNombre()+"','";
 		sql1 += restaurante.getNombre() + "','";
 		sql1+= ing2.getNombre() + "';";
+		PreparedStatement prepStmt = conn.prepareStatement(sql1);
+		recursos.add(prepStmt);
+		prepStmt.executeQuery();
 	}
 	
 }
