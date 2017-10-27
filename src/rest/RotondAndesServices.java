@@ -25,6 +25,7 @@ import vos.Restaurante;
 import vos.Restaurante_Producto;
 import vos.Zona;
 import vosContainers.MenuProductos;
+import vosContainers.PedidoMenu;
 import vosContainers.ProductoIngredientes;
 import vosContainers.ProductosServidos;
 import vosContainers.RegistroCliente;
@@ -302,16 +303,16 @@ public class RotondAndesServices {
 	}
 	
 	//___________________________________________________________________________________________//
-		//-------------------------------------------------------------------------------------------//
-		//----------------------------------------ITERACIÓN 3----------------------------------------//
-		//-------------------------------------------------------------------------------------------//
-		//___________________________________________________________________________________________//
+	//-------------------------------------------------------------------------------------------//
+	//----------------------------------------ITERACIÓN 3----------------------------------------//
+	//-------------------------------------------------------------------------------------------//
+	//___________________________________________________________________________________________//
 	
+	//RF 11 - registrar equivalencia ingredientes
 	@POST
 	@Path("equivalenciasIngredientes/{restaurante}")
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	
+	@Produces(MediaType.APPLICATION_JSON)	
 	public Response registrarEquivalenciasIngrediente(TuplaEQIngrediente ingredientes, @PathParam("restaurante") String restaurante)
 	{
 		RotondAndesTM tm = new RotondAndesTM(getPath());
@@ -327,6 +328,7 @@ public class RotondAndesServices {
 		
 	}
 	
+	//RF 12 - registrar equivalencia productos
 	@POST
 	@Path("equivalenciasProductos/{restaurante}")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -344,6 +346,48 @@ public class RotondAndesServices {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
 		return Response.status(200).entity(ingredientes).build();
+		
+	}
+	
+	//RF 13 - Surtir restaurante
+	@POST
+	@Path("pedidos/{restaurante}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	
+	public Response registarPedidoMenu(PedidoMenu pedido, @PathParam("restaurante") String restaurante)
+	{
+		RotondAndesTM tm = new RotondAndesTM(getPath());
+		try
+		{
+			tm.registrarPedidoMenu(pedido, restaurante);
+		}
+		catch (Exception e)
+		{
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(pedido).build();
+		
+	}
+	
+	
+	//RF 14 - Registrar pedido de un producto
+	@POST
+	@Path("pedidos/{restaurante}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response surtirRestaurante(@PathParam("restaurante") String restaurante)
+	{
+		RotondAndesTM tm = new RotondAndesTM(getPath());
+		try
+		{
+			tm.surtirRestaurante(restaurante);
+		}
+		catch (Exception e)
+		{
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(restaurante).build();
 		
 	}
 	

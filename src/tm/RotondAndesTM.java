@@ -26,6 +26,7 @@ import vos.Restaurante;
 import vos.Restaurante_Producto;
 import vos.Zona;
 import vosContainers.MenuProductos;
+import vosContainers.PedidoMenu;
 import vosContainers.ProductoIngredientes;
 import vosContainers.ProductosServidos;
 import vosContainers.RegistroCliente;
@@ -531,6 +532,8 @@ public class RotondAndesTM {
 	//-------------------------------------------------------------------------------------------//
 	//___________________________________________________________________________________________//
 	
+	
+	//RF 11 - registrar equivalencia ingredientes
 	public TuplaEQIngrediente registrarEquivalenciaIngrediente(String restaurante, TuplaEQIngrediente productos) throws Exception
 	{
 		
@@ -566,6 +569,8 @@ public class RotondAndesTM {
 		return productos;
 	}
 	
+	
+	//RF 12 - registrar equivalencia productos
 	public TuplaEQProducto registrarEquivalenciaProducto(String restaurante, TuplaEQProducto productos) throws Exception
 	{
 		
@@ -600,5 +605,79 @@ public class RotondAndesTM {
 		
 		return productos;
 	}	
+	
+	
+	//RF 13 - Surtir restaurante	
+	public String surtirRestaurante(String restaurante) throws Exception
+	{
+		DAOIter3 dao = new DAOIter3();
+		
+		try 
+		{
+			//////transaccion
+			this.conn = darConexion();
+			dao.setConn(conn);
+			dao.surtirRestaurante(restaurante);
+
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				dao.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+		
+		return restaurante;
+	}
+	
+	
+	//RF 14 - Registrar pedido de un producto
+	public PedidoMenu registrarPedidoMenu(PedidoMenu menu, String restaurante) throws Exception
+	{
+		DAOIter3 dao = new DAOIter3();
+		
+		try 
+		{
+			//////transaccion
+			this.conn = darConexion();
+			dao.setConn(conn);
+			
+			//TODO llamar método RF14
+			//dao.METODOREEGISTRARPEDIDO()
+
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				dao.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+		
+		return menu;
+	}
 	
 }
