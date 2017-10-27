@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import vos.Ingrediente;
 import vos.Producto;
@@ -63,6 +65,8 @@ public class DAOIter3 {
 		ResultSet rs = prepStmt.executeQuery();
 		return rs.next();
 	}
+	
+	
 	public boolean esCliente(String nombre, String contraseña)throws SQLException, Exception
 	{
 		String sql="SELECT * FROM USUARIO U WHERE";
@@ -72,19 +76,24 @@ public class DAOIter3 {
 		ResultSet rs = prepStmt.executeQuery();
 		return rs.next();
 	}
+	
+	
+	
 	public void registrarEquivalenciaDeProducto(Producto prod1, Producto prod2, Restaurante restaurante, String usuario, String contr)throws SQLException, Exception 
 	{
 		if(esRestaurante(usuario, contr))
 		{
 			String sql1 = "INSERT INTO EQUIVALENCIASPRODUCTO VALUES ('";
-			sql1+=prod1.getNombre()+"','";
-			sql1 += restaurante.getNombre() + "','";
+			sql1+=restaurante.getNombre()+"','";
+			sql1 += prod1.getNombre() + "','";
 			sql1+= prod2.getNombre() + "';";
 			PreparedStatement prepStmt = conn.prepareStatement(sql1);
 			recursos.add(prepStmt);
 			prepStmt.executeQuery();
 		}
 	}
+	
+	
 	public void registrarEquivalenciaDeIngrediente(Ingrediente ing1, Ingrediente ing2, Restaurante restaurante, String usuario, String contr)throws SQLException, Exception 
 	{
 		if(esRestaurante(usuario, contr))
@@ -98,6 +107,9 @@ public class DAOIter3 {
 			prepStmt.executeQuery();
 		}
 	}
+	
+	
+	
 	public void surtirRestaurante(Restaurante rest) throws SQLException, Exception
 	{
 		ArrayList<ProductosBodega> productos=darProductosRestaurante(rest);
@@ -111,6 +123,8 @@ public class DAOIter3 {
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
 	}
+	
+	
 	public ArrayList<ProductosBodega> darProductosRestaurante(Restaurante rest)throws SQLException, Exception
 	{
 		ArrayList<ProductosBodega> productos = new ArrayList<ProductosBodega>();
@@ -128,5 +142,75 @@ public class DAOIter3 {
 			productos.add(new ProductosBodega(nombreRest, nombreProd, cantProd, max));
 		}
 		return productos;
+	}
+	
+	
+	/**
+	 * Metodo que busca el/los videos con el nombre que entra como parametro.
+	 * @param name - Nombre de el/los videos a buscar
+	 * @return ArrayList con los videos encontrados
+	 * @throws SQLException - Cualquier error que la base de datos arroje.
+	 * @throws Exception - Cualquier error que no corresponda a la base de datos
+	 */
+	public ArrayList<Producto> buscarProductosPorNombre(List<String> name) throws SQLException, Exception {
+		ArrayList<Producto> productos = new ArrayList<Producto>();
+		Iterator<String> iter= name.iterator();
+		while(iter.hasNext())
+		{
+			String sql = "SELECT * FROM PRODUCTO WHERE NOMBRE ='" + iter.next() + "'";
+
+			PreparedStatement prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			ResultSet rs = prepStmt.executeQuery();
+
+			while (rs.next()) 
+			{
+				String nombre = rs.getString("NOMBRE");
+				Integer categoria = rs.getInt("CATEGORIA");
+				Integer precioVenta = rs.getInt("PRECIOVENTA");
+				Integer costosProduccion = rs.getInt("COSTOPRODUCCION");
+				String tipoComidaProd = rs.getString("TIPOCOMIDAPROD");
+				Integer tiempoDePreparacion = rs.getInt("TIEMPOPREPARACION");
+				productos.add(new Producto(nombre, categoria, precioVenta, costosProduccion, tipoComidaProd,tiempoDePreparacion));
+			}
+		}
+
+		return productos;
+	}
+	
+	public void registrarpedidoIter3REQ14(String nombrePM, boolean esMenu, List<String> productos,String usuario, String contr)throws SQLException, Exception 
+	{
+		if(usuario!=null)
+		{
+			if(!esCliente(usuario, contr))
+			{
+				throw new Exception("el usuario o la contraseña no existen o son incorrectos.");
+			}
+		}
+		if(esMenu) 
+		{
+			ArrayList<Producto> productos2=buscarProductosPorNombre(productos);
+			if(!diferentesCategorias(productos2))
+			{
+				throw new Exception("No puede haber en un Menú productos de la misma categoría.");
+			}
+			
+			
+		}
+	}
+	
+	public boolean diferentesCategorias(ArrayList<Producto> prods)
+	{
+		boolean hay=false;
+		for (int i = 0; i < prods.size()&&!hay; i++) 
+		{
+			int cat=prods.get(i).getCategoria();
+			for (int j = i+1; j < prods.size()&&!hay; j++) 
+			{
+				if(cat==prods.get(j).getCategoria())
+				hay=true;
+			}
+		}
+		return hay;
 	}
 }
