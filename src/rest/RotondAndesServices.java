@@ -28,6 +28,8 @@ import vosContainers.MenuProductos;
 import vosContainers.ProductoIngredientes;
 import vosContainers.ProductosServidos;
 import vosContainers.RegistroCliente;
+import vosContainers.TuplaEQIngrediente;
+import vosContainers.TuplaEQProducto;
 
 @Path("rotonda")
 public class RotondAndesServices {
@@ -296,6 +298,52 @@ public class RotondAndesServices {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
 		return Response.status(200).entity(productos).build();
+		
+	}
+	
+	//___________________________________________________________________________________________//
+		//-------------------------------------------------------------------------------------------//
+		//----------------------------------------ITERACIÓN 3----------------------------------------//
+		//-------------------------------------------------------------------------------------------//
+		//___________________________________________________________________________________________//
+	
+	@POST
+	@Path("equivalenciasIngredientes/{restaurante}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	
+	public Response registrarEquivalenciasIngrediente(TuplaEQIngrediente ingredientes, @PathParam("restaurante") String restaurante)
+	{
+		RotondAndesTM tm = new RotondAndesTM(getPath());
+		try
+		{
+			tm.registrarEquivalenciaIngrediente(restaurante, ingredientes);
+		}
+		catch (Exception e)
+		{
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(ingredientes).build();
+		
+	}
+	
+	@POST
+	@Path("equivalenciasProductos/{restaurante}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	
+	public Response registrarEquivalenciasProducto(TuplaEQProducto ingredientes, @PathParam("restaurante") String restaurante)
+	{
+		RotondAndesTM tm = new RotondAndesTM(getPath());
+		try
+		{
+			tm.registrarEquivalenciaProducto(restaurante, ingredientes);
+		}
+		catch (Exception e)
+		{
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(ingredientes).build();
 		
 	}
 	

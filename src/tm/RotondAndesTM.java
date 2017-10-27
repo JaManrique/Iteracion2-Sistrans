@@ -12,6 +12,7 @@ import java.util.Properties;
 import dao.DAOCheckOut;
 import dao.DAOClientesRegistrados;
 import dao.DAOIngrediente;
+import dao.DAOIter3;
 import dao.DAOMenu;
 import dao.DAOProducto;
 import dao.DAORestaurante;
@@ -28,6 +29,8 @@ import vosContainers.MenuProductos;
 import vosContainers.ProductoIngredientes;
 import vosContainers.ProductosServidos;
 import vosContainers.RegistroCliente;
+import vosContainers.TuplaEQIngrediente;
+import vosContainers.TuplaEQProducto;
 
 public class RotondAndesTM {
 
@@ -522,16 +525,23 @@ public class RotondAndesTM {
 		return resp;
 	}
 	
-	/*
-	 
-		DAO dao = ;
+	//___________________________________________________________________________________________//
+	//-------------------------------------------------------------------------------------------//
+	//----------------------------------------ITERACIÓN 3----------------------------------------//
+	//-------------------------------------------------------------------------------------------//
+	//___________________________________________________________________________________________//
+	
+	public TuplaEQIngrediente registrarEquivalenciaIngrediente(String restaurante, TuplaEQIngrediente productos) throws Exception
+	{
+		
+		DAOIter3 dao = new DAOIter3();
+		
 		try 
 		{
 			//////transaccion
 			this.conn = darConexion();
 			dao.setConn(conn);
-			dao.registrar();
-			conn.commit();			
+			dao.registrarEquivalenciaDeIngrediente(productos.getIng1(), productos.getIng2(), restaurante, productos.getAdminUser(), productos.getAdminPass());
 
 		} catch (SQLException e) {
 			System.err.println("SQLException:" + e.getMessage());
@@ -552,6 +562,43 @@ public class RotondAndesTM {
 				throw exception;
 			}
 		}
-	 */
+		
+		return productos;
+	}
+	
+	public TuplaEQProducto registrarEquivalenciaProducto(String restaurante, TuplaEQProducto productos) throws Exception
+	{
+		
+		DAOIter3 dao = new DAOIter3();
+		
+		try 
+		{
+			//////transaccion
+			this.conn = darConexion();
+			dao.setConn(conn);
+			dao.registrarEquivalenciaDeIngrediente(productos.getProd1(), productos.getProd2(), restaurante, productos.getAdminUser(), productos.getAdminPass());
+
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				dao.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+		
+		return productos;
+	}	
 	
 }
