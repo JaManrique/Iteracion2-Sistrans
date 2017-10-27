@@ -79,33 +79,148 @@ public class DAOIter3 {
 	
 	
 	
-	public void registrarEquivalenciaDeProducto(Producto prod1, Producto prod2, Restaurante restaurante, String usuario, String contr)throws SQLException, Exception 
+	public void registrarEquivalenciaDeProducto(String prod1, String prod2, String restaurante, String usuario, String contr)throws SQLException, Exception 
 	{
 		if(esRestaurante(usuario, contr))
 		{
-			String sql1 = "INSERT INTO EQUIVALENCIASPRODUCTO VALUES ('";
-			sql1+=restaurante.getNombre()+"','";
-			sql1 += prod1.getNombre() + "','";
-			sql1+= prod2.getNombre() + "';";
-			PreparedStatement prepStmt = conn.prepareStatement(sql1);
+			int eq1 = -1;
+			int eq2 = -1;
+			String sql = "";
+			
+			sql = "SELECT E.EQUIVALENCIAS FROM EQUIVALENCIASPRODUCTO E WHERE E.PRODUCTO_NOMBRE = '" + prod1 +"'";
+			PreparedStatement prepStmt = conn.prepareStatement(sql);
 			recursos.add(prepStmt);
-			prepStmt.executeQuery();
+			ResultSet rs = prepStmt.executeQuery();
+			
+			if(rs.next())
+			{
+				eq1 = rs.getInt(1);
+			}
+			
+			sql = "SELECT E.EQUIVALENCIAS FROM EQUIVALENCIASPRODUCTO E WHERE E.PRODUCTO_NOMBRE = '" + prod2 +"'";
+			prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			rs = prepStmt.executeQuery();
+			
+			if(rs.next())
+			{
+				eq2 = rs.getInt(1);
+			}
+			
+			if(eq1 > 0)
+			{
+				sql = "INSERT INTO EQUIVALENCIASPRODUCTO VALUES ('" + restaurante + "', '" + prod2 + "', ?)";
+				prepStmt = conn.prepareStatement(sql);
+				prepStmt.setInt(1, eq1);
+				recursos.add(prepStmt);
+				rs = prepStmt.executeQuery();
+			}
+			else if (eq2 > 0)
+			{
+				sql = "INSERT INTO EQUIVALENCIASPRODUCTO VALUES ('" + restaurante + "', '" + prod1 + "', ?)";
+				prepStmt = conn.prepareStatement(sql);
+				prepStmt.setInt(1, eq2);
+				recursos.add(prepStmt);
+				prepStmt.execute();
+			}
+			else
+			{
+				int max;
+				sql = "SELECT MAX(E.EQUIVALENCIA) FROM EQUIVALENCIASPRODUCTO E WHERE E.RESTAURANTE_NOMBRE = '" + restaurante + "'";
+				prepStmt = conn.prepareStatement(sql);
+				recursos.add(prepStmt);
+				rs = prepStmt.executeQuery();
+				rs.next();
+				max = rs.getInt(1);
+				
+				sql = "INSERT INTO EQUIVALENCIASPRODUCTO VALUES ('" + restaurante + "', '" + prod1 + "', ?)";
+				prepStmt = conn.prepareStatement(sql);
+				prepStmt.setInt(1, max+1);
+				recursos.add(prepStmt);
+				prepStmt.execute();
+				
+				sql = "INSERT INTO EQUIVALENCIASPRODUCTO VALUES ('" + restaurante + "', '" + prod2 + "', ?)";
+				prepStmt = conn.prepareStatement(sql);
+				prepStmt.setInt(1, max+1);
+				recursos.add(prepStmt);
+				prepStmt.execute();
+			}
 		}
+		else
+			throw new Exception("Login inválido");
 	}
 	
 	
-	public void registrarEquivalenciaDeIngrediente(Ingrediente ing1, Ingrediente ing2, Restaurante restaurante, String usuario, String contr)throws SQLException, Exception 
+	public void registrarEquivalenciaDeIngrediente(String ing1, String ing2, String restaurante, String usuario, String contr)throws SQLException, Exception 
 	{
 		if(esRestaurante(usuario, contr))
 		{
-			String sql1 = "INSERT INTO EQUIVALENCIASINGREDIENTE VALUES ('";
-			sql1+=ing1.getNombre()+"','";
-			sql1 += restaurante.getNombre() + "','";
-			sql1+= ing2.getNombre() + "';";
-			PreparedStatement prepStmt = conn.prepareStatement(sql1);
+			int eq1 = -1;
+			int eq2 = -1;
+			String sql = "";
+			
+			sql = "SELECT E.EQUIVALENCIAS FROM EQUIVALENCIASPRODUCTO E WHERE E.PRODUCTO_NOMBRE = '" + ing1 +"'";
+			PreparedStatement prepStmt = conn.prepareStatement(sql);
 			recursos.add(prepStmt);
-			prepStmt.executeQuery();
+			ResultSet rs = prepStmt.executeQuery();
+			
+			if(rs.next())
+			{
+				eq1 = rs.getInt(1);
+			}
+			
+			sql = "SELECT E.EQUIVALENCIAS FROM EQUIVALENCIASPRODUCTO E WHERE E.PRODUCTO_NOMBRE = '" + ing2 +"'";
+			prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			rs = prepStmt.executeQuery();
+			
+			if(rs.next())
+			{
+				eq2 = rs.getInt(1);
+			}
+			
+			if(eq1 > 0)
+			{
+				sql = "INSERT INTO EQUIVALENCIASPRODUCTO VALUES ('" + restaurante + "', '" + ing2 + "', ?)";
+				prepStmt = conn.prepareStatement(sql);
+				prepStmt.setInt(1, eq1);
+				recursos.add(prepStmt);
+				rs = prepStmt.executeQuery();
+			}
+			else if (eq2 > 0)
+			{
+				sql = "INSERT INTO EQUIVALENCIASPRODUCTO VALUES ('" + restaurante + "', '" + ing1 + "', ?)";
+				prepStmt = conn.prepareStatement(sql);
+				prepStmt.setInt(1, eq2);
+				recursos.add(prepStmt);
+				prepStmt.execute();
+			}
+			else
+			{
+				int max;
+				sql = "SELECT MAX(E.EQUIVALENCIA) FROM EQUIVALENCIASPRODUCTO E WHERE E.RESTAURANTE_NOMBRE = '" + restaurante + "'";
+				prepStmt = conn.prepareStatement(sql);
+				recursos.add(prepStmt);
+				rs = prepStmt.executeQuery();
+				rs.next();
+				max = rs.getInt(1);
+				
+				sql = "INSERT INTO EQUIVALENCIASPRODUCTO VALUES ('" + restaurante + "', '" + ing1 + "', ?)";
+				prepStmt = conn.prepareStatement(sql);
+				prepStmt.setInt(1, max+1);
+				recursos.add(prepStmt);
+				prepStmt.execute();
+				
+				sql = "INSERT INTO EQUIVALENCIASPRODUCTO VALUES ('" + restaurante + "', '" + ing2 + "', ?)";
+				prepStmt = conn.prepareStatement(sql);
+				prepStmt.setInt(1, max+1);
+				recursos.add(prepStmt);
+				prepStmt.execute();
+			}
+			prepStmt.close();
 		}
+		else
+			throw new Exception("Login inválido");
 	}
 	
 	
