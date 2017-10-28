@@ -14,6 +14,7 @@ import vos.CheckOut;
 import vos.EquivalenciasProducto;
 import vos.Ingrediente;
 import vos.Producto;
+import vos.Producto_CheckOut;
 import vos.Producto_Menu;
 import vos.ProductosBodega;
 import vos.Restaurante;
@@ -356,18 +357,26 @@ public class DAOIter3 {
 					{
 						throw new Exception("Los algunos de los productos pedidos no son equivalentes a los permitidos en el menu, por ejemplo el producto: "+poductoB.getNombre()+".");
 					}
-					CheckOut ck=new CheckOut(pNom, ctrn, a)
 				}
+				
 			}
-			int servido=1;
-			try 
+			int max;
+			String sql = "SELECT MAX(C.CHECKOUT_ID) FROM PRODUCTO_CHECKOUT C";
+			PreparedStatement prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			ResultSet rs = prepStmt.executeQuery();
+			rs.next();
+			max = rs.getInt(1);
+			for (int i = 0; i < productosB.size(); i++)
 			{
-				retirarproductosbodega(restaurante, productosB);
-			}
-			catch(Exception e)
-			{
-				registrarCheckOuts(productosB, lis, entregado);
-				throw new Exception("No hay unidades en bodega.");
+				String time=String.valueOf(System.currentTimeMillis());   
+				CheckOut ck=new CheckOut(max, 0, time);
+				Producto_CheckOut prodc=new Producto_CheckOut(max,productosB.get(i).getNombre(),1);
+				String sql2= "INSERT INTO CHECOUT VALUES ("+max+", "+0+", "+time+", NULL);";
+				sql2+="INSERT INTO PRODUCTO_CHECOUT VALUES ("+max+", "+productosB.get(i).getNombre()+", "+1+")";
+				prepStmt = conn.prepareStatement(sql2);
+				recursos.add(prepStmt);
+				rs = prepStmt.executeQuery();
 			}
 		}
 	}
@@ -448,22 +457,5 @@ public class DAOIter3 {
 			a = rs.getInt("CANTIDADPRODUCTO");
 		}
 		return a;
-	}
-	public void registrarCheckOut(CheckOut prod, List<Restaurante_Producto> lis, int entregado) throws SQLException, Exception {
-		
-		String sql="";
-		for(int i=0; i<lis.size();i++)
-		{
-			sql+= "INSERT INTO CHECKOUT VALUES ('";
-			sql += prod.getId() + "','";
-			prod.setEntregado(entregado);
-			sql += prod.getEntregado() + "','";
-			sql += prod.getTiempor()+ "');";
-		}
-		
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
-		recursos.add(prepStmt);
-		prepStmt.executeQuery();
-
 	}
 }
