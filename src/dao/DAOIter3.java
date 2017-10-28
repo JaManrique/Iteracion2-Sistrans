@@ -8,10 +8,16 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.sun.glass.ui.Size;
+
+import vos.CheckOut;
+import vos.EquivalenciasProducto;
 import vos.Ingrediente;
 import vos.Producto;
+import vos.Producto_Menu;
 import vos.ProductosBodega;
 import vos.Restaurante;
+import vos.Restaurante_Producto;
 
 public class DAOIter3 {
 
@@ -238,7 +244,27 @@ public class DAOIter3 {
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
 	}
-	
+	public void retirarproductosbodega(String rest, List<Producto> prods)throws SQLException, Exception
+	{
+		String sql="";
+		for (int i = 0; i < prods.size(); i++)
+		{
+			int cantActual=cantidadEnBodega(prods.get(i).getNombre(), rest);
+			if(cantActual==0)
+			{
+				throw new Exception("no se puede vender el producto, no hay mas en bodega.");
+			}
+			else
+			{
+				cantActual--;
+			}
+			 sql+= "UPDATE PRODUCTOSBODEGA P SET CANTIDADPRODUCTO="+cantActual;
+			 sql+=" WHERE P.PRODUCTO_NOMBRE LIKE '"+prods.get(i).getNombre()+"' AND P.INVENTARIO_RESTAURANTE_NOMBRE LIKE '"+rest+"';";			
+		}
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		prepStmt.executeQuery();
+	}
 	
 	public ArrayList<ProductosBodega> darProductosRestaurante(String rest)throws SQLException, Exception
 	{
@@ -267,8 +293,8 @@ public class DAOIter3 {
 	 * @throws SQLException - Cualquier error que la base de datos arroje.
 	 * @throws Exception - Cualquier error que no corresponda a la base de datos
 	 */
-	public ArrayList<Producto> buscarProductosPorNombre(List<String> name) throws SQLException, Exception {
-		ArrayList<Producto> productos = new ArrayList<Producto>();
+	public List<Producto> buscarProductosPorNombre(List<String> name) throws SQLException, Exception {
+		List<Producto> productos = new ArrayList<Producto>();
 		Iterator<String> iter= name.iterator();
 		while(iter.hasNext())
 		{
@@ -293,7 +319,7 @@ public class DAOIter3 {
 		return productos;
 	}
 	
-	public void registrarpedidoIter3REQ14(String nombrePM, boolean esMenu, List<String> productos,String usuario, String contr)throws SQLException, Exception 
+	public void registrarpedidoIter3REQ14(String nombrePM, boolean esMenu, List<String> productos,String usuario, String contr,String restaurante)throws SQLException, Exception 
 	{
 		if(usuario!=null)
 		{
@@ -304,17 +330,49 @@ public class DAOIter3 {
 		}
 		if(esMenu) 
 		{
-			ArrayList<Producto> productos2=buscarProductosPorNombre(productos);
-			if(!diferentesCategorias(productos2))
+			ArrayList<CheckOut> cks=new ArrayList<>();
+			//lista productos que llegan por parametro en el pedido.
+			List<Producto> productosB=buscarProductosPorNombre(productos);
+			//lista productos del menú.
+			List<Producto> productosA=darProductosMenu(nombrePM);
+			
+			if(!diferentesCategorias(productosB))
 			{
 				throw new Exception("No puede haber en un Menú productos de la misma categoría.");
 			}
-			
-			
+			//equivalencias productos del pedido.
+			ArrayList<Integer> equivalenciasB=darEquivalenciasProductos(productos, restaurante);
+			//equivalencias productos del menú.
+			ArrayList<Integer> equivalenciasA=darEquivalenciasProductosMenú(productosA, restaurante);
+			for (int i = 0; i < equivalenciasA.size(); i++) 
+			{
+				Producto poductoA=productosA.get(i);
+				int equivalenciaA=equivalenciasA.get(i);
+				for(int j=0;j< equivalenciasB.size();j++)
+				{
+					Producto poductoB=productosB.get(j);
+					int equivalenciaB=equivalenciasB.get(j);
+					if(poductoA.getCategoria()==poductoB.getCategoria()&&equivalenciaA!=equivalenciaB)
+					{
+						throw new Exception("Los algunos de los productos pedidos no son equivalentes a los permitidos en el menu, por ejemplo el producto: "+poductoB.getNombre()+".");
+					}
+					CheckOut ck=new CheckOut(pNom, ctrn, a)
+				}
+			}
+			int servido=1;
+			try 
+			{
+				retirarproductosbodega(restaurante, productosB);
+			}
+			catch(Exception e)
+			{
+				registrarCheckOuts(productosB, lis, entregado);
+				throw new Exception("No hay unidades en bodega.");
+			}
 		}
 	}
 	
-	public boolean diferentesCategorias(ArrayList<Producto> prods)
+	public boolean diferentesCategorias(List<Producto> prods)
 	{
 		boolean hay=false;
 		for (int i = 0; i < prods.size()&&!hay; i++) 
@@ -327,5 +385,85 @@ public class DAOIter3 {
 			}
 		}
 		return hay;
+	}
+	public List<Producto> darProductosMenu(String menu)throws SQLException, Exception
+	{
+		List<String> prods=new ArrayList<>() ;
+		String sql = "SELECT * FROM PRODUCTO_MENU WHERE MENU_NOMBRE ='" + menu + "'";
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+
+		while (rs.next()) 
+		{
+			String nombre_producto = rs.getString("PRODUCTO_NOMBRE");
+			prods.add(nombre_producto);
+		}
+		return buscarProductosPorNombre(prods);
+	}
+	public ArrayList<Integer> darEquivalenciasProductos(List<String> productos, String restaurante)throws SQLException, Exception
+	{
+		ArrayList<Integer> eqs=new ArrayList<>() ;
+		Iterator<String> p=productos.iterator();
+		while(p.hasNext())
+		{
+			int equivalencia=0;
+			//sacar equivalencia del producto
+			String sql = "SELECT * FROM EQUIVALECIASPRODUCTO WHERE PRODUCTO_NOMBRE ='" + p.next() + "' AND RESTAURANTE_NOMBRE='"+restaurante+"'";
+			PreparedStatement prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			ResultSet rs = prepStmt.executeQuery();
+			equivalencia = rs.getInt("EQUIVALENCIA");
+			eqs.add(equivalencia);
+		}
+		return eqs;
+	}
+	public ArrayList<Integer> darEquivalenciasProductosMenú(List<Producto> productos, String restaurante)throws SQLException, Exception
+	{
+		ArrayList<Integer> eqs=new ArrayList<>() ;
+		Iterator<Producto> p=productos.iterator();
+		while(p.hasNext())
+		{
+			int equivalencia=0;
+			//sacar equivalencia del producto
+			String sql = "SELECT * FROM EQUIVALECIASPRODUCTO WHERE PRODUCTO_NOMBRE ='" + p.next().getNombre() + "' AND RESTAURANTE_NOMBRE='"+restaurante+"'";
+			PreparedStatement prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			ResultSet rs = prepStmt.executeQuery();
+			equivalencia = rs.getInt("EQUIVALENCIA");
+			eqs.add(equivalencia);
+		}
+		return eqs;
+	}
+	public Integer cantidadEnBodega(String prod, String rest)throws SQLException, Exception
+	{
+		Integer a=0;
+		String sql = "SELECT * FROM PRODUCTOSBODEGA P WHERE P.NOMBRE LIKE '"+ prod+"' "
+				+ "AND P.INVENTARIO_RESTAURANTE_NOMBRE LIKE '"+rest+"'";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+		while (rs.next()) {
+			a = rs.getInt("CANTIDADPRODUCTO");
+		}
+		return a;
+	}
+	public void registrarCheckOut(CheckOut prod, List<Restaurante_Producto> lis, int entregado) throws SQLException, Exception {
+		
+		String sql="";
+		for(int i=0; i<lis.size();i++)
+		{
+			sql+= "INSERT INTO CHECKOUT VALUES ('";
+			sql += prod.getId() + "','";
+			prod.setEntregado(entregado);
+			sql += prod.getEntregado() + "','";
+			sql += prod.getTiempor()+ "');";
+		}
+		
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		prepStmt.executeQuery();
+
 	}
 }
