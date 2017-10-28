@@ -239,7 +239,7 @@ public class DAOIter3 {
 		for (int i = 0; i < productos.size(); i++)
 		{
 			 sql+= "UPDATE PRODUCTOSBODEGA P SET CANTIDADPRODUCTO="+productos.get(i).getMaximo();
-			 sql+=" WHERE P.PRODUCTO_NOMBRE LIKE '"+productos.get(i).getNombreProd()+"' AND P.INVENTARIO_RESTAURANTE_NOMBRE LIKE '"+productos.get(i).getNombreRest()+"';";			
+			 sql+=" WHERE P.PRODUCTO_NOMBRE LIKE '"+productos.get(i).getNombreProd()+"' AND P.INVENTARIO_RESTAURANTE_NOMBRE LIKE '"+productos.get(i).getNombreRest()+"'";			
 		}
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
@@ -260,7 +260,7 @@ public class DAOIter3 {
 				cantActual--;
 			}
 			 sql+= "UPDATE PRODUCTOSBODEGA P SET CANTIDADPRODUCTO="+cantActual;
-			 sql+=" WHERE P.PRODUCTO_NOMBRE LIKE '"+prods.get(i).getNombre()+"' AND P.INVENTARIO_RESTAURANTE_NOMBRE LIKE '"+rest+"';";			
+			 sql+=" WHERE P.PRODUCTO_NOMBRE LIKE '"+prods.get(i).getNombre()+"' AND P.INVENTARIO_RESTAURANTE_NOMBRE LIKE '"+rest+"'";			
 		}
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
@@ -372,7 +372,7 @@ public class DAOIter3 {
 				String time=String.valueOf(System.currentTimeMillis());   
 				CheckOut ck=new CheckOut(max, 0, time);
 				Producto_CheckOut prodc=new Producto_CheckOut(max,productosB.get(i).getNombre(),1);
-				String sql2= "INSERT INTO CHECOUT VALUES ("+max+", "+0+", "+time+", NULL);";
+				String sql2= "INSERT INTO CHECOUT VALUES ("+max+", "+0+", "+time+", NULL)";
 				sql2+="INSERT INTO PRODUCTO_CHECOUT VALUES ("+max+", "+productosB.get(i).getNombre()+", "+1+")";
 				prepStmt = conn.prepareStatement(sql2);
 				recursos.add(prepStmt);
