@@ -550,6 +550,43 @@
 				"description": ""
 			},
 			"response": []
+		},
+		{
+			"name": "testRF13 - surtir un restaurante",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "localhost:8080/RotondAndes/rest/rotonda/pedidos/CORRAL",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"RotondAndes",
+						"rest",
+						"rotonda",
+						"pedidos",
+						"CORRAL"
+					]
+				},
+				"description": ""
+			},
+			"response": []
 		}
 	]
 }

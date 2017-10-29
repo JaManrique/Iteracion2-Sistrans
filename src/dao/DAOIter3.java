@@ -241,19 +241,20 @@ public class DAOIter3 {
 	}
 	
 	
+	//RF 13 - Surtir restaurante
 	public void surtirRestaurante(String rest) throws SQLException, Exception
 	{
 		ArrayList<ProductosBodega> productos=darProductosRestaurante(rest);
 		String sql="";
 		for (int i = 0; i < productos.size(); i++)
 		{
-			 sql+= "UPDATE PRODUCTOSBODEGA P SET CANTIDADPRODUCTO="+productos.get(i).getMaximo();
-			 sql+=" WHERE P.PRODUCTO_NOMBRE LIKE '"+productos.get(i).getNombreProd()+"' AND P.INVENTARIO_RESTAURANTE_NOMBRE LIKE '"+productos.get(i).getNombreRest()+"'";			
+			sql = "UPDATE PRODUCTOSBODEGA P SET CANTIDADPRODUCTO="+productos.get(i).getMaximo() + " WHERE P.PRODUCTO_NOMBRE LIKE '"+productos.get(i).getNombreProd()+"' AND P.INVENTARIO_RESTAURANTE_NOMBRE LIKE '"+productos.get(i).getNombreRest()+"'";			
+			PreparedStatement prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			prepStmt.executeQuery();
 		}
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
-		recursos.add(prepStmt);
-		prepStmt.executeQuery();
 	}
+	
 	public void retirarproductosbodega(String rest, List<Producto> prods)throws SQLException, Exception
 	{
 		String sql="";
@@ -279,8 +280,7 @@ public class DAOIter3 {
 	public ArrayList<ProductosBodega> darProductosRestaurante(String rest)throws SQLException, Exception
 	{
 		ArrayList<ProductosBodega> productos = new ArrayList<ProductosBodega>();
-		String sql = "SELECT * FROM PRODUCTOSBODEGA P";
-		sql+="WHERE P.INVENTARIO_RESTAURANTE_NOMBRE LIKE "+ "'"+rest+"'";
+		String sql = "SELECT * FROM PRODUCTOSBODEGA P WHERE P.INVENTARIO_RESTAURANTE_NOMBRE LIKE "+ "'"+rest+"'";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		ResultSet rs = prepStmt.executeQuery();

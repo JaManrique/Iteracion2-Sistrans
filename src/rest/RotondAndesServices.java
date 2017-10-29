@@ -352,6 +352,25 @@ public class RotondAndesServices {
 	//RF 13 - Surtir restaurante
 	@POST
 	@Path("pedidos/{restaurante}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response surtirRestaurante(@PathParam("restaurante") String restaurante)
+	{
+		RotondAndesTM tm = new RotondAndesTM(getPath());
+		try
+		{
+			tm.surtirRestaurante(restaurante);
+		}
+		catch (Exception e)
+		{
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).build();
+		
+	}
+
+	//RF 14 - Registrar pedido de un producto
+	@POST
+	@Path("pedidos/{restaurante}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	
@@ -367,27 +386,6 @@ public class RotondAndesServices {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
 		return Response.status(200).entity(pedido).build();
-		
-	}
-	
-	
-	//RF 14 - Registrar pedido de un producto
-	@POST
-	@Path("pedidos/{restaurante}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response surtirRestaurante(@PathParam("restaurante") String restaurante)
-	{
-		RotondAndesTM tm = new RotondAndesTM(getPath());
-		try
-		{
-			tm.surtirRestaurante(restaurante);
-		}
-		catch (Exception e)
-		{
-			return Response.status(500).entity(doErrorMessage(e)).build();
-		}
-		return Response.status(200).entity(restaurante).build();
 		
 	}
 	
