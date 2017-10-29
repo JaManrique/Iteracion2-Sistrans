@@ -40,11 +40,18 @@ public class ProductoIngredientes{
 	
 	@JsonProperty(value="tipo")
 	private String tipo;
+	
+	@JsonProperty(value="esMax")
+	private Boolean esMax;
+	
+	@JsonProperty(value="max")
+	private Integer max;
 
 	public ProductoIngredientes(@JsonProperty(value="nombre")String pNom, @JsonProperty(value="categoria")Integer pCat,
 			@JsonProperty(value="precioVenta")Integer pVenta, @JsonProperty(value="costosProduccion")Integer pProd, 
 			@JsonProperty(value="tipoComidaProd")String ptipoCom, @JsonProperty(value="tiempoPreparacion")Integer ptiempo, @JsonProperty(value="nombreIng")String pNomIng,@JsonProperty(value="descEsp")String pdescEsp,
-			@JsonProperty(value="descIng")String pdescING,@JsonProperty(value="tipo")String ptipo, @JsonProperty(value="isIngrediente") Boolean pIsIng,@JsonProperty(value="isProducto") Boolean pIsProd ) {
+			@JsonProperty(value="descIng")String pdescING,@JsonProperty(value="tipo")String ptipo, @JsonProperty(value="isIngrediente") Boolean pIsIng,@JsonProperty(value="isProducto") Boolean pIsProd,
+			@JsonProperty(value="esMax") Boolean esMaxx, @JsonProperty(value="max") Integer maxx) {
 		super();
 		nombre=pNom;
 		categoria=pCat;
@@ -58,6 +65,8 @@ public class ProductoIngredientes{
 		tipo = ptipo;
 		isIngrediente = pIsIng;
 		isProducto = pIsProd;
+		esMax = esMaxx;
+		max = maxx;
 	}
 	public Integer getCostosProduccion() {
 		return costosProduccion;
@@ -162,5 +171,18 @@ public class ProductoIngredientes{
 	public void setTipo(String tipo) {
 		this.tipo = tipo;
 	}
+	public Boolean getEsMax() {
+		return esMax;
+	}
+	public void setEsMax(Boolean esMax) {
+		this.esMax = esMax;
+	}
+	public Integer getMax() {
+		return max;
+	}
+	public void setMax(Integer max) {
+		this.max = max;
+	}
+	
 
 }

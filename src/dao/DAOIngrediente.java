@@ -49,34 +49,22 @@ public class DAOIngrediente {
 	public void setConn(Connection con){
 		this.conn = con;
 	}
-	
+	/**
+	 * Metodo que agrega el video que entra como parametro a la base de datos.
+	 * @param prod - el video a agregar. video !=  null
+	 * <b> post: </b> se ha agregado el video a la base de datos en la transaction actual. pendiente que el video master
+	 * haga commit para que el video baje  a la base de datos.
+	 * @throws SQLException - Cualquier error que la base de datos arroje. No pudo agregar el video a la base de datos
+	 * @throws Exception - Cualquier error que no corresponda a la base de datos
+	 */
 	public void registrarIngrediente(Ingrediente prod, String rest) throws SQLException, Exception {
 
 		String sql = "INSERT INTO INGREDIENTE VALUES ('";
-		sql += prod.getNombre() + "','";
-		sql += prod.getDescEsp() + "','";
-		sql += prod.getDescING() + "','";
-		sql += prod.getTipo()+ "';";
-		sql +="INSERT INTO RESTAURANTE_INGREDIENTE VALUES ('";
-		sql+=rest+"','";
-		sql+=prod.getNombre() + "';";
-		
+		sql += prod.getNombre() + "', '";
+		sql += prod.getDescEsp() + "', '" + prod.getDescING() + "','" + prod.getTipo() + "')";
+
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
-
 	}
-	
-	public void registrarEquivalenciaDeIngrediente(Ingrediente ing1, Ingrediente ing2, Restaurante restaurante, String usuario, String contr)throws SQLException, Exception 
-	{
-		
-		String sql1 = "INSERT INTO EQUIVALENCIASINGREDIENTE VALUES ('";
-		sql1+=ing1.getNombre()+"','";
-		sql1 += restaurante.getNombre() + "','";
-		sql1+= ing2.getNombre() + "';";
-		PreparedStatement prepStmt = conn.prepareStatement(sql1);
-		recursos.add(prepStmt);
-		prepStmt.executeQuery();
-	}
-	
 }

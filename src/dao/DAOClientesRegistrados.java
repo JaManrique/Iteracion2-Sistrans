@@ -94,7 +94,7 @@ public class DAOClientesRegistrados {
 
 		if(rsverif.next()) 
 		{
-			correctPass = rsverif.getString("CONTRASEÑA");
+			correctPass = rsverif.getString("CONTRASENA");
 		}
 		else
 			throw new Exception("Usuario inválido");
