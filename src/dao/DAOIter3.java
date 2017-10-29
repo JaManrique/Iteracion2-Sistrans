@@ -19,6 +19,7 @@ import vos.Producto_Menu;
 import vos.ProductosBodega;
 import vos.Restaurante;
 import vos.Restaurante_Producto;
+import vosContainers.PedidoMenu;
 
 public class DAOIter3 {
 
@@ -467,4 +468,10 @@ public class DAOIter3 {
 		}
 		return a;
 	}
+	
+	public void registrarMesa(List<PedidoMenu> pedidos)
+	{
+		
+	}
+	
 }
