@@ -1,10 +1,9 @@
 {
-	"variables": [],
 	"info": {
 		"name": "Iteración2SistransTest",
-		"_postman_id": "43e738bc-cd51-9d8c-8293-10c4c25393de",
+		"_postman_id": "7eb69abb-2ded-6be6-6abf-8b96fc134249",
 		"description": "",
-		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
@@ -23,18 +22,30 @@
 				}
 			],
 			"request": {
-				"url": "http://localhost:8080/RotondAndes/rest/rotonda/usuario",
 				"method": "POST",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"usuario\": \"nuevoDesdePostman\",\n\t\"contraseña\": \"masLargaQueAlgo\",\n\t\"rol\": \"restaurante\",\n\t\"correo\": \"correo@mail.com\"\n}"
+					"raw": "{\n  \"usuario\": \"nuevoDesdePostman\",\n  \"contraseña\": \"masLargaQueAlgo\",\n  \"rol\": \"restaurante\",\n  \"correo\": \"correo@mail.com\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/RotondAndes/rest/rotonda/usuario",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"RotondAndes",
+						"rest",
+						"rotonda",
+						"usuario"
+					]
 				},
 				"description": ""
 			},
@@ -56,18 +67,29 @@
 				}
 			],
 			"request": {
-				"url": "localhost:8080/RotondAndes/rest/rotonda/clientes",
 				"method": "POST",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": "{\r\n  \"usuario\": \"nuevoClientePostman\",\r\n  \"contraseña\": \"nuevaContraseña\",\r\n  \"rol\": \"cliente\",\r\n  \"correo\": \"nuevo@gmail.com\",\r\n  \"adminUser\": \"nuevoDesdePostman\",\r\n  \"adminPass\": \"masLargaQueAlgo\"\r\n}"
+				},
+				"url": {
+					"raw": "localhost:8080/RotondAndes/rest/rotonda/clientes",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"RotondAndes",
+						"rest",
+						"rotonda",
+						"clientes"
+					]
 				},
 				"description": ""
 			},
@@ -89,18 +111,29 @@
 				}
 			],
 			"request": {
-				"url": "localhost:8080/RotondAndes/rest/rotonda/restaurantes",
 				"method": "POST",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": "{\r\n  \"nombre\": \"nuevoRestaurantePostman\",\r\n  \"descripcion\": \"el nuevo restaurante en la base de datos va a volver locos a todos en la ciudad!\",\r\n  \"tipoComidaRest\": \"comida casera\",\r\n  \"paginaWeb\": \"http://nuevoPostman.com.ida\"\r\n}"
+				},
+				"url": {
+					"raw": "localhost:8080/RotondAndes/rest/rotonda/restaurantes",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"RotondAndes",
+						"rest",
+						"rotonda",
+						"restaurantes"
+					]
 				},
 				"description": ""
 			},
@@ -122,18 +155,30 @@
 				}
 			],
 			"request": {
-				"url": "localhost:8080/RotondAndes/rest/rotonda/ingredientes/nuevoRestaurantePostman",
 				"method": "POST",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"nombre\":\"Arroz Blanco\",\n\t\"descEsp\":\"Algo muy raro en colombia\",\n\t\"descIng\":\"Something really strange in colombia\",\n\t\"tipo\":\"hortaliza\"\n}"
+					"raw": "{\n  \"nombre\":\"Arroz Blanco\",\n  \"descEsp\":\"Algo muy raro en colombia\",\n  \"descIng\":\"Something really strange in colombia\",\n  \"tipo\":\"hortaliza\"\n}"
+				},
+				"url": {
+					"raw": "localhost:8080/RotondAndes/rest/rotonda/ingredientes/nuevoRestaurantePostman",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"RotondAndes",
+						"rest",
+						"rotonda",
+						"ingredientes",
+						"nuevoRestaurantePostman"
+					]
 				},
 				"description": ""
 			},
@@ -155,18 +200,30 @@
 				}
 			],
 			"request": {
-				"url": "localhost:8080/RotondAndes/rest/rotonda/productos/nuevoRestaurantePostman",
 				"method": "POST",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "[\n\t{\n\t\t\"isIngrediente\": true,\n\t\t\"nombreIng\":\"Arroz Blanco\",\n\t\t\"descEsp\":\"Algo muy raro en colombia\",\n\t\t\"descIng\":\"Something really strange in colombia\",\n\t\t\"tipo\":\"hortaliza\"\n\t},\n\t{\n\t\t\"isProducto\":true,\n\t\t\"nombre\":\"Porcion de arroz\",\n\t\t\"categoria\": 2,\n\t\t\"precioVenta\": 8000,\n\t\t\"costosProduccion\": 4000,\n\t\t\"tipoComidaProd\": \"Exotico\",\n\t\t\"tiempoPreparacion\": 10\n\t}\n]"
+					"raw": "[\n  {\n    \"isIngrediente\": true,\n    \"nombreIng\":\"Arroz Blanco\",\n    \"descEsp\":\"Algo muy raro en colombia\",\n    \"descIng\":\"Something really strange in colombia\",\n    \"tipo\":\"hortaliza\"\n  },\n  {\n    \"isProducto\":true,\n    \"nombre\":\"Porcion de arroz\",\n    \"categoria\": 2,\n    \"precioVenta\": 8000,\n    \"costosProduccion\": 4000,\n    \"tipoComidaProd\": \"Exotico\",\n    \"tiempoPreparacion\": 10\n  }\n]"
+				},
+				"url": {
+					"raw": "localhost:8080/RotondAndes/rest/rotonda/productos/nuevoRestaurantePostman",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"RotondAndes",
+						"rest",
+						"rotonda",
+						"productos",
+						"nuevoRestaurantePostman"
+					]
 				},
 				"description": ""
 			},
@@ -188,18 +245,29 @@
 				}
 			],
 			"request": {
-				"url": "localhost:8080/RotondAndes/rest/rotonda/menus",
 				"method": "POST",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "[\r\n{\r\n  \"nombre\": \"comboArroz\",\r\n  \"categoria\": \"4\",\r\n  \"precioVenta\": \"10000\",\r\n  \"costosProduccion\":\"6000\",\r\n  \"tipoComidaProd\": \"Casero\",\r\n  \"tiempoPreparacion\": \"10\",\r\n  \"restaurante_nombre\": \"nuevoRestaurantePostman\",\r\n  \"isMenu\": \"true\"\r\n},\r\n{\r\n\t\"producto_nombre\": \"Porcion de arroz\",\r\n\t\"isProducto\": \"true\"\r\n}\r\n]"
+					"raw": "[\r\n{\r\n  \"nombre\": \"comboArroz\",\r\n  \"categoria\": \"4\",\r\n  \"precioVenta\": \"10000\",\r\n  \"costosProduccion\":\"6000\",\r\n  \"tipoComidaProd\": \"Casero\",\r\n  \"tiempoPreparacion\": \"10\",\r\n  \"restaurante_nombre\": \"nuevoRestaurantePostman\",\r\n  \"isMenu\": \"true\"\r\n},\r\n{\r\n  \"producto_nombre\": \"Porcion de arroz\",\r\n  \"isProducto\": \"true\"\r\n}\r\n]"
+				},
+				"url": {
+					"raw": "localhost:8080/RotondAndes/rest/rotonda/menus",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"RotondAndes",
+						"rest",
+						"rotonda",
+						"menus"
+					]
 				},
 				"description": ""
 			},
@@ -208,18 +276,29 @@
 		{
 			"name": "test RFC1 - consultar productos servidos",
 			"request": {
-				"url": "localhost:8080/RotondAndes/rest/rotonda/productosServidos",
 				"method": "POST",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": "{\r\n  \"filtro\": \"a\",\r\n  \"columnaFiltro\": \"CATEGORIA\",\r\n  \"compFiltro\": \"3\",\r\n  \"agruparPor\": \"NOMBRE\",\r\n  \"orden\": \"ASC\"\r\n}"
+				},
+				"url": {
+					"raw": "localhost:8080/RotondAndes/rest/rotonda/productosServidos",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"RotondAndes",
+						"rest",
+						"rotonda",
+						"productosServidos"
+					]
 				},
 				"description": ""
 			},
@@ -241,10 +320,25 @@
 				}
 			],
 			"request": {
-				"url": "localhost:8080/RotondAndes/rest/rotonda/zonasInfo",
 				"method": "GET",
 				"header": [],
-				"body": {},
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:8080/RotondAndes/rest/rotonda/zonasInfo",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"RotondAndes",
+						"rest",
+						"rotonda",
+						"zonasInfo"
+					]
+				},
 				"description": ""
 			},
 			"response": []
@@ -265,10 +359,25 @@
 				}
 			],
 			"request": {
-				"url": "localhost:8080/RotondAndes/rest/rotonda/clientesInfo",
 				"method": "GET",
 				"header": [],
-				"body": {},
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:8080/RotondAndes/rest/rotonda/clientesInfo",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"RotondAndes",
+						"rest",
+						"rotonda",
+						"clientesInfo"
+					]
+				},
 				"description": ""
 			},
 			"response": []
@@ -289,10 +398,25 @@
 				}
 			],
 			"request": {
-				"url": "localhost:8080/RotondAndes/rest/rotonda/productosMasOfrecidos",
 				"method": "GET",
 				"header": [],
-				"body": {},
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:8080/RotondAndes/rest/rotonda/productosMasOfrecidos",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"RotondAndes",
+						"rest",
+						"rotonda",
+						"productosMasOfrecidos"
+					]
+				},
 				"description": ""
 			},
 			"response": []
@@ -313,10 +437,153 @@
 				}
 			],
 			"request": {
-				"url": "localhost:8080/RotondAndes/rest/rotonda/rentabilidad/CORRAL",
 				"method": "GET",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:8080/RotondAndes/rest/rotonda/rentabilidad/CORRAL",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"RotondAndes",
+						"rest",
+						"rotonda",
+						"rentabilidad",
+						"CORRAL"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "testRF11 - registrar una equivalencia ingrediente",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"ing1\":\"NUTELLA\",\n\t\"ing2\": \"PAN\",\n\t\"adminUser\": \"juan10\",\n\t\"adminPass\": \"claveGenerica\" \n}"
+				},
+				"url": {
+					"raw": "localhost:8080/RotondAndes/rest/rotonda/equivalenciasIngredientes/CREPES Y WAFFLES",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"RotondAndes",
+						"rest",
+						"rotonda",
+						"equivalenciasIngredientes",
+						"CREPES Y WAFFLES"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "testRF12 - registrar una equivalencia producto",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"ing1\":\"CORRALISIMA TODOTERRENO\",\n\t\"ing2\": \"PAPAS FRITAS\",\n\t\"adminUser\": \"juan10\",\n\t\"adminPass\": \"claveGenerica\" \n}"
+				},
+				"url": {
+					"raw": "localhost:8080/RotondAndes/rest/rotonda/equivalenciasIngredientes/CORRAL",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"RotondAndes",
+						"rest",
+						"rotonda",
+						"equivalenciasIngredientes",
+						"CORRAL"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "testRF13 - surtir un restaurante",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
 				"body": {},
+				"url": {
+					"raw": "localhost:8080/RotondAndes/rest/rotonda/pedidos/CORRAL",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"RotondAndes",
+						"rest",
+						"rotonda",
+						"pedidos",
+						"CORRAL"
+					]
+				},
 				"description": ""
 			},
 			"response": []
