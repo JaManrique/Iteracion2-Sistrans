@@ -63,9 +63,10 @@ public class DAOIter3 {
 		this.conn = con;
 	}
 
-	public boolean esRestaurante(String nombre, String contraseña)throws SQLException, Exception 
+	public boolean esRestaurante(String nombre, String contrasena)throws SQLException, Exception 
 	{
-		String sql="SELECT * FROM USUARIO U WHERE U.USUARIO = '"+nombre+"' AND U.CONTRASENA = '"+contraseña+"'"+" AND U.ROL='admin restaurante'";
+		System.out.println(nombre + " // " + contrasena );
+		String sql="SELECT * FROM USUARIO U WHERE U.USUARIO LIKE '"+nombre+"' AND U.CONTRASENA LIKE '"+contrasena+"' AND U.ROL LIKE 'admin restaurante'";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		ResultSet rs = prepStmt.executeQuery();
@@ -73,9 +74,9 @@ public class DAOIter3 {
 	}
 	
 	
-	public boolean esCliente(String nombre, String contraseña)throws SQLException, Exception
+	public boolean esCliente(String nombre, String contrasena)throws SQLException, Exception
 	{
-		String sql="SELECT * FROM USUARIO U WHERE U.USUARIO = '"+nombre+"'"+" AND U.CONTRASEÑA = '"+contraseña+"'"+" AND U.ROL='cliente'";
+		String sql="SELECT * FROM USUARIO U WHERE U.USUARIO = '"+nombre+"' AND U.CONTRASENA LIKE '"+contrasena+"' AND U.ROL LIKE 'cliente'";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		ResultSet rs = prepStmt.executeQuery();
@@ -92,7 +93,7 @@ public class DAOIter3 {
 			int eq2 = -1;
 			String sql = "";
 			
-			sql = "SELECT EQUIVALENCIA FROM EQUIVALENCIASINGREDIENTE WHERE INGREDIENTE_NOMBRE = '" + ing1 +"' AND RESTAURANTE_NOMBRE = '" + restaurante + "'";
+			sql = "SELECT EQUIVALENCIA FROM EQUIVALENCIASINGREDIENTE WHERE INGREDIENTE_NOMBRE LIKE '" + ing1 +"' AND RESTAURANTE_NOMBRE LIKE '" + restaurante + "'";
 			PreparedStatement prepStmt = conn.prepareStatement(sql);
 			recursos.add(prepStmt);
 			ResultSet rs = prepStmt.executeQuery();
@@ -172,7 +173,7 @@ public class DAOIter3 {
 			int eq2 = -1;
 			String sql = "";
 			
-			sql = "SELECT E.EQUIVALENCIAS FROM EQUIVALENCIASPRODUCTO E WHERE E.PRODUCTO_NOMBRE = '" + prod1 +"'";
+			sql = "SELECT E.EQUIVALENCIA FROM EQUIVALENCIASPRODUCTO E WHERE E.PRODUCTO_NOMBRE = '" + prod1 +"'";
 			PreparedStatement prepStmt = conn.prepareStatement(sql);
 			recursos.add(prepStmt);
 			ResultSet rs = prepStmt.executeQuery();
@@ -182,7 +183,7 @@ public class DAOIter3 {
 				eq1 = rs.getInt(1);
 			}
 			
-			sql = "SELECT E.EQUIVALENCIAS FROM EQUIVALENCIASPRODUCTO E WHERE E.PRODUCTO_NOMBRE = '" + prod2 +"'";
+			sql = "SELECT E.EQUIVALENCIA FROM EQUIVALENCIASPRODUCTO E WHERE E.PRODUCTO_NOMBRE = '" + prod2 +"'";
 			prepStmt = conn.prepareStatement(sql);
 			recursos.add(prepStmt);
 			rs = prepStmt.executeQuery();

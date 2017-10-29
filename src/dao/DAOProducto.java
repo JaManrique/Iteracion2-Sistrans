@@ -281,7 +281,7 @@ public class DAOProducto {
 	 * @throws SQLException - Cualquier error que la base de datos arroje. No pudo agregar el video a la base de datos
 	 * @throws Exception - Cualquier error que no corresponda a la base de datos
 	 */
-	public void registrarProducto(Producto prod, String nomRest, List<Ingrediente> ingr) throws SQLException, Exception {
+	public void registrarProducto(Producto prod, String nomRest, List<Ingrediente> ingr, Integer max) throws SQLException, Exception {
 
 		String sql = "INSERT INTO PRODUCTO VALUES ('";
 		sql += prod.getNombre() + "',";
@@ -296,10 +296,11 @@ public class DAOProducto {
 		
 		sql = "INSERT INTO PRODUCTOSBODEGA VALUES ( ?,'";
 		sql += nomRest + "', '";
-		sql += prod.getNombre() + "')";
+		sql += prod.getNombre() + "', ?)";
 		
 		prepStmt = conn.prepareStatement(sql);
 		prepStmt.setInt(1, 1);
+		prepStmt.setInt(2, max);
 		prepStmt.execute();
 		
 		for (int i = 0; i < ingr.size(); i++) {

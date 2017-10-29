@@ -168,13 +168,18 @@ public class RotondAndesTM {
 		
 		List<Ingrediente> ingredientes = parseProductoIngrediente(objetos);
 		Producto producto = null;
+		int max = -1;
 		
 		for(ProductoIngredientes obj : objetos)
 		{
 			if(obj.getIsProducto() != null && obj.getIsProducto())
 			{
 				producto = new Producto(obj.getNombre(), obj.getCategoria(), obj.getPrecioVenta(), obj.getCostosDeProduccion(), obj.getTipoComidaProd(), obj.getTiempoPreparacion());
-				break;
+			}
+			else if (obj.getEsMax() != null && obj.getEsMax())
+			{
+				max = obj.getMax();
+				System.out.println("MAXHP: " + max);
 			}
 		}
 		
@@ -186,7 +191,7 @@ public class RotondAndesTM {
 			//////transaccion
 			this.conn = darConexion();
 			daoProducto.setConn(conn);
-			daoProducto.registrarProducto(producto, restaurante, ingredientes);
+			daoProducto.registrarProducto(producto, restaurante, ingredientes, max);
 			conn.commit();
 
 		} catch (SQLException e) {
