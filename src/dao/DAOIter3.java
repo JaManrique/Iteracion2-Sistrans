@@ -67,8 +67,7 @@ public class DAOIter3 {
 
 	public boolean esRestaurante(String nombre, String contraseña)throws SQLException, Exception 
 	{
-		String sql="SELECT * FROM USUARIO U WHERE";
-		sql+="U.USUARIO = '"+nombre+"'"+" AND U.CONTRASEÑA = '"+contraseña+"'"+" AND U.ROL='admin restaurante'";
+		String sql="SELECT * FROM USUARIO U WHERE U.USUARIO = '"+nombre+"' AND U.CONTRASENA = '"+contraseña+"'"+" AND U.ROL='admin restaurante'";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		ResultSet rs = prepStmt.executeQuery();
@@ -78,8 +77,7 @@ public class DAOIter3 {
 	
 	public boolean esCliente(String nombre, String contraseña)throws SQLException, Exception
 	{
-		String sql="SELECT * FROM USUARIO U WHERE";
-		sql+="U.USUARIO = '"+nombre+"'"+" AND U.CONTRASEÑA = '"+contraseña+"'"+" AND U.ROL='cliente'";
+		String sql="SELECT * FROM USUARIO U WHERE U.USUARIO = '"+nombre+"'"+" AND U.CONTRASEÑA = '"+contraseña+"'"+" AND U.ROL='cliente'";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		ResultSet rs = prepStmt.executeQuery();
@@ -87,7 +85,87 @@ public class DAOIter3 {
 	}
 	
 	
+	// RF 11 - Equivalencias ingrediente
+	public void registrarEquivalenciaDeIngrediente(String ing1, String ing2, String restaurante, String usuario, String contr)throws SQLException, Exception 
+	{
+		if(esRestaurante(usuario, contr))
+		{
+			int eq1 = -1;
+			int eq2 = -1;
+			String sql = "";
+			
+			sql = "SELECT EQUIVALENCIA FROM EQUIVALENCIASINGREDIENTE WHERE INGREDIENTE_NOMBRE = '" + ing1 +"' AND RESTAURANTE_NOMBRE = '" + restaurante + "'";
+			PreparedStatement prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			ResultSet rs = prepStmt.executeQuery();
+			
+			if(rs.next())
+			{
+				eq1 = rs.getInt(1);
+			}
+			
+			sql = "SELECT EQUIVALENCIA FROM EQUIVALENCIASINGREDIENTE WHERE INGREDIENTE_NOMBRE = '" + ing2 +"' AND RESTAURANTE_NOMBRE = '" + restaurante + "'";
+			prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			rs = prepStmt.executeQuery();
+			
+			if(rs.next())
+			{
+				eq2 = rs.getInt(1);
+			}
+			
+			if(eq1 >0 && eq2>0)
+			{
+				throw new Exception("Esos productos ya pertenecen a alguna equivalencia del restaurante");
+			}
+			
+			
+			if(eq1 > 0)
+			{
+				sql = "INSERT INTO EQUIVALENCIASINGREDIENTE VALUES ('" + restaurante + "', '" + ing2 + "', ?)";
+				prepStmt = conn.prepareStatement(sql);
+				prepStmt.setInt(1, eq1);
+				recursos.add(prepStmt);
+				rs = prepStmt.executeQuery();
+			}
+			else if (eq2 > 0)
+			{
+				sql = "INSERT INTO EQUIVALENCIASINGREDIENTE VALUES ('" + restaurante + "', '" + ing1 + "', ?)";
+				prepStmt = conn.prepareStatement(sql);
+				prepStmt.setInt(1, eq2);
+				recursos.add(prepStmt);
+				prepStmt.execute();
+			}
+			else
+			{
+				int max;
+				sql = "SELECT MAX(E.EQUIVALENCIA) FROM EQUIVALENCIASINGREDIENTE E WHERE E.RESTAURANTE_NOMBRE = '" + restaurante + "'";
+				prepStmt = conn.prepareStatement(sql);
+				recursos.add(prepStmt);
+				rs = prepStmt.executeQuery();
+				rs.next();
+				max = rs.getInt(1);
+				
+				sql = "INSERT INTO EQUIVALENCIASINGREDIENTE VALUES ('" + restaurante + "', '" + ing1 + "', ?)";
+				prepStmt = conn.prepareStatement(sql);
+				prepStmt.setInt(1, max+1);
+				recursos.add(prepStmt);
+				prepStmt.execute();
+				
+				sql = "INSERT INTO EQUIVALENCIASINGREDIENTE VALUES ('" + restaurante + "', '" + ing2 + "', ?)";
+				prepStmt = conn.prepareStatement(sql);
+				prepStmt.setInt(1, max+1);
+				recursos.add(prepStmt);
+				prepStmt.execute();
+			}
+			prepStmt.close();
+		}
+		else
+			throw new Exception("Login inválido");
+	}
+
 	
+	// RF 12 - Equivalencias producto
 	public void registrarEquivalenciaDeProducto(String prod1, String prod2, String restaurante, String usuario, String contr)throws SQLException, Exception 
 	{
 		if(esRestaurante(usuario, contr))
@@ -116,6 +194,11 @@ public class DAOIter3 {
 				eq2 = rs.getInt(1);
 			}
 			
+			if(eq1 >0 && eq2>0)
+			{
+				throw new Exception("Esos productos ya pertenecen a alguna equivalencia del restaurante");
+			}
+			
 			if(eq1 > 0)
 			{
 				sql = "INSERT INTO EQUIVALENCIASPRODUCTO VALUES ('" + restaurante + "', '" + prod2 + "', ?)";
@@ -160,93 +243,20 @@ public class DAOIter3 {
 	}
 	
 	
-	public void registrarEquivalenciaDeIngrediente(String ing1, String ing2, String restaurante, String usuario, String contr)throws SQLException, Exception 
-	{
-		if(esRestaurante(usuario, contr))
-		{
-			int eq1 = -1;
-			int eq2 = -1;
-			String sql = "";
-			
-			sql = "SELECT E.EQUIVALENCIAS FROM EQUIVALENCIASPRODUCTO E WHERE E.PRODUCTO_NOMBRE = '" + ing1 +"'";
-			PreparedStatement prepStmt = conn.prepareStatement(sql);
-			recursos.add(prepStmt);
-			ResultSet rs = prepStmt.executeQuery();
-			
-			if(rs.next())
-			{
-				eq1 = rs.getInt(1);
-			}
-			
-			sql = "SELECT E.EQUIVALENCIAS FROM EQUIVALENCIASPRODUCTO E WHERE E.PRODUCTO_NOMBRE = '" + ing2 +"'";
-			prepStmt = conn.prepareStatement(sql);
-			recursos.add(prepStmt);
-			rs = prepStmt.executeQuery();
-			
-			if(rs.next())
-			{
-				eq2 = rs.getInt(1);
-			}
-			
-			if(eq1 > 0)
-			{
-				sql = "INSERT INTO EQUIVALENCIASPRODUCTO VALUES ('" + restaurante + "', '" + ing2 + "', ?)";
-				prepStmt = conn.prepareStatement(sql);
-				prepStmt.setInt(1, eq1);
-				recursos.add(prepStmt);
-				rs = prepStmt.executeQuery();
-			}
-			else if (eq2 > 0)
-			{
-				sql = "INSERT INTO EQUIVALENCIASPRODUCTO VALUES ('" + restaurante + "', '" + ing1 + "', ?)";
-				prepStmt = conn.prepareStatement(sql);
-				prepStmt.setInt(1, eq2);
-				recursos.add(prepStmt);
-				prepStmt.execute();
-			}
-			else
-			{
-				int max;
-				sql = "SELECT MAX(E.EQUIVALENCIA) FROM EQUIVALENCIASPRODUCTO E WHERE E.RESTAURANTE_NOMBRE = '" + restaurante + "'";
-				prepStmt = conn.prepareStatement(sql);
-				recursos.add(prepStmt);
-				rs = prepStmt.executeQuery();
-				rs.next();
-				max = rs.getInt(1);
-				
-				sql = "INSERT INTO EQUIVALENCIASPRODUCTO VALUES ('" + restaurante + "', '" + ing1 + "', ?)";
-				prepStmt = conn.prepareStatement(sql);
-				prepStmt.setInt(1, max+1);
-				recursos.add(prepStmt);
-				prepStmt.execute();
-				
-				sql = "INSERT INTO EQUIVALENCIASPRODUCTO VALUES ('" + restaurante + "', '" + ing2 + "', ?)";
-				prepStmt = conn.prepareStatement(sql);
-				prepStmt.setInt(1, max+1);
-				recursos.add(prepStmt);
-				prepStmt.execute();
-			}
-			prepStmt.close();
-		}
-		else
-			throw new Exception("Login inválido");
-	}
-	
-	
-	
+	//RF 13 - Surtir restaurante
 	public void surtirRestaurante(String rest) throws SQLException, Exception
 	{
 		ArrayList<ProductosBodega> productos=darProductosRestaurante(rest);
 		String sql="";
 		for (int i = 0; i < productos.size(); i++)
 		{
-			 sql+= "UPDATE PRODUCTOSBODEGA P SET CANTIDADPRODUCTO="+productos.get(i).getMaximo();
-			 sql+=" WHERE P.PRODUCTO_NOMBRE LIKE '"+productos.get(i).getNombreProd()+"' AND P.INVENTARIO_RESTAURANTE_NOMBRE LIKE '"+productos.get(i).getNombreRest()+"'";			
+			sql = "UPDATE PRODUCTOSBODEGA P SET CANTIDADPRODUCTO="+productos.get(i).getMaximo() + " WHERE P.PRODUCTO_NOMBRE LIKE '"+productos.get(i).getNombreProd()+"' AND P.INVENTARIO_RESTAURANTE_NOMBRE LIKE '"+productos.get(i).getNombreRest()+"'";			
+			PreparedStatement prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			prepStmt.executeQuery();
 		}
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
-		recursos.add(prepStmt);
-		prepStmt.executeQuery();
 	}
+	
 	public void retirarproductosbodega(String rest, List<Producto> prods)throws SQLException, Exception
 	{
 		String sql="";
@@ -272,8 +282,7 @@ public class DAOIter3 {
 	public ArrayList<ProductosBodega> darProductosRestaurante(String rest)throws SQLException, Exception
 	{
 		ArrayList<ProductosBodega> productos = new ArrayList<ProductosBodega>();
-		String sql = "SELECT * FROM PRODUCTOSBODEGA P";
-		sql+="WHERE P.INVENTARIO_RESTAURANTE_NOMBRE LIKE "+ "'"+rest+"'";
+		String sql = "SELECT * FROM PRODUCTOSBODEGA P WHERE P.INVENTARIO_RESTAURANTE_NOMBRE LIKE "+ "'"+rest+"'";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		ResultSet rs = prepStmt.executeQuery();
@@ -324,23 +333,13 @@ public class DAOIter3 {
 	
 	public void registrarpedidoIter3REQ14(String nombrePM, boolean esMenu, List<String> productos,String usuario, String contr,String restaurante)throws SQLException, Exception 
 	{
-		String cliente="NULL";
 		if(usuario!=null)
 		{
 			if(!esCliente(usuario, contr))
 			{
 				throw new Exception("el usuario o la contraseña no existen o son incorrectos.");
 			}
-			cliente=usuario;
-			
 		}
-		int max;
-		String sql = "SELECT MAX(C.CHECKOUT_ID) FROM PRODUCTO_CHECKOUT C";
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
-		recursos.add(prepStmt);
-		ResultSet rs = prepStmt.executeQuery();
-		rs.next();
-		max = rs.getInt(1);
 		if(esMenu) 
 		{
 			ArrayList<CheckOut> cks=new ArrayList<>();
@@ -372,16 +371,31 @@ public class DAOIter3 {
 				}
 				
 			}
+			int max;
+			String sql = "SELECT MAX(C.CHECKOUT_ID) FROM PRODUCTO_CHECKOUT C";
+			PreparedStatement prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			ResultSet rs = prepStmt.executeQuery();
+			rs.next();
+			max = rs.getInt(1);
 			for (int i = 0; i < productosB.size(); i++)
 			{
 				String time=String.valueOf(System.currentTimeMillis());   
+<<<<<<< HEAD
 				String sql2= "INSERT INTO CHECOUT VALUES ("+max+", "+0+", "+time+", NULL, "+cliente+")";
 				sql2+="INSERT INTO PRODUCTO_CHECOUT VALUES ("+max+", "+productosB.get(i).getNombre()+", "+restaurante+","+1+",)";
+=======
+				CheckOut ck=new CheckOut(max, 0, time);
+				Producto_CheckOut prodc=new Producto_CheckOut(max,productosB.get(i).getNombre(),1);
+				String sql2= "INSERT INTO CHECOUT VALUES ("+max+", "+0+", "+time+", NULL)";
+				sql2+="INSERT INTO PRODUCTO_CHECOUT VALUES ("+max+", "+productosB.get(i).getNombre()+", "+1+")";
+>>>>>>> bb26a960840500b95cbe6ee43c208167d46d4287
 				prepStmt = conn.prepareStatement(sql2);
 				recursos.add(prepStmt);
-				prepStmt.execute();
+				rs = prepStmt.executeQuery();
 			}
 		}
+<<<<<<< HEAD
 		if(!esMenu)
 		{
 			String time=String.valueOf(System.currentTimeMillis());   
@@ -427,6 +441,8 @@ public class DAOIter3 {
 		PreparedStatement prepStmt2 = conn.prepareStatement(sql);
 		recursos.add(prepStmt2);
 		prepStmt2.executeQuery();		
+=======
+>>>>>>> bb26a960840500b95cbe6ee43c208167d46d4287
 	}
 	
 	public boolean diferentesCategorias(List<Producto> prods)
@@ -506,4 +522,10 @@ public class DAOIter3 {
 		}
 		return a;
 	}
+	
+	public void registrarMesa(List<PedidoMenu> pedidos)
+	{
+		
+	}
+	
 }
