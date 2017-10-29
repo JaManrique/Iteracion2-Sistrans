@@ -308,27 +308,7 @@ public class RotondAndesServices {
 	//-------------------------------------------------------------------------------------------//
 	//___________________________________________________________________________________________//
 	
-	//RF 11 - registrar equivalencia ingredientes
-	@POST
-	@Path("equivalenciasIngredientes/{restaurante}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)	
-	public Response registrarEquivalenciasIngrediente(TuplaEQIngrediente ingredientes, @PathParam("restaurante") String restaurante)
-	{
-		RotondAndesTM tm = new RotondAndesTM(getPath());
-		try
-		{
-			tm.registrarEquivalenciaIngrediente(restaurante, ingredientes);
-		}
-		catch (Exception e)
-		{
-			return Response.status(500).entity(doErrorMessage(e)).build();
-		}
-		return Response.status(200).entity(ingredientes).build();
-		
-	}
-	
-	//RF 12 - registrar equivalencia productos
+	//RF 11 - registrar equivalencia productos
 	@POST
 	@Path("equivalenciasProductos/{restaurante}")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -340,6 +320,26 @@ public class RotondAndesServices {
 		try
 		{
 			tm.registrarEquivalenciaProducto(restaurante, ingredientes);
+		}
+		catch (Exception e)
+		{
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(ingredientes).build();
+		
+	}
+
+	//RF 12 - registrar equivalencia ingredientes
+	@POST
+	@Path("equivalenciasIngredientes/{restaurante}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)	
+	public Response registrarEquivalenciasIngrediente(TuplaEQIngrediente ingredientes, @PathParam("restaurante") String restaurante)
+	{
+		RotondAndesTM tm = new RotondAndesTM(getPath());
+		try
+		{
+			tm.registrarEquivalenciaIngrediente(restaurante, ingredientes);
 		}
 		catch (Exception e)
 		{
