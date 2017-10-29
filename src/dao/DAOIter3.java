@@ -333,13 +333,22 @@ public class DAOIter3 {
 	
 	public void registrarpedidoIter3REQ14(String nombrePM, boolean esMenu, List<String> productos,String usuario, String contr,String restaurante)throws SQLException, Exception 
 	{
+		String cliente="NULL";
 		if(usuario!=null)
 		{
 			if(!esCliente(usuario, contr))
 			{
 				throw new Exception("el usuario o la contraseña no existen o son incorrectos.");
 			}
+			cliente=usuario;
 		}
+		int max;
+		String sql = "SELECT MAX(C.CHECKOUT_ID) FROM PRODUCTO_CHECKOUT C";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+		rs.next();
+		max = rs.getInt(1);
 		if(esMenu) 
 		{
 			ArrayList<CheckOut> cks=new ArrayList<>();
@@ -371,31 +380,20 @@ public class DAOIter3 {
 				}
 				
 			}
-			int max;
-			String sql = "SELECT MAX(C.CHECKOUT_ID) FROM PRODUCTO_CHECKOUT C";
-			PreparedStatement prepStmt = conn.prepareStatement(sql);
-			recursos.add(prepStmt);
-			ResultSet rs = prepStmt.executeQuery();
-			rs.next();
-			max = rs.getInt(1);
+
 			for (int i = 0; i < productosB.size(); i++)
 			{
 				String time=String.valueOf(System.currentTimeMillis());   
-<<<<<<< HEAD
+
 				String sql2= "INSERT INTO CHECOUT VALUES ("+max+", "+0+", "+time+", NULL, "+cliente+")";
 				sql2+="INSERT INTO PRODUCTO_CHECOUT VALUES ("+max+", "+productosB.get(i).getNombre()+", "+restaurante+","+1+",)";
-=======
-				CheckOut ck=new CheckOut(max, 0, time);
-				Producto_CheckOut prodc=new Producto_CheckOut(max,productosB.get(i).getNombre(),1);
-				String sql2= "INSERT INTO CHECOUT VALUES ("+max+", "+0+", "+time+", NULL)";
-				sql2+="INSERT INTO PRODUCTO_CHECOUT VALUES ("+max+", "+productosB.get(i).getNombre()+", "+1+")";
->>>>>>> bb26a960840500b95cbe6ee43c208167d46d4287
+
 				prepStmt = conn.prepareStatement(sql2);
 				recursos.add(prepStmt);
 				rs = prepStmt.executeQuery();
 			}
 		}
-<<<<<<< HEAD
+
 		if(!esMenu)
 		{
 			String time=String.valueOf(System.currentTimeMillis());   
@@ -441,8 +439,7 @@ public class DAOIter3 {
 		PreparedStatement prepStmt2 = conn.prepareStatement(sql);
 		recursos.add(prepStmt2);
 		prepStmt2.executeQuery();		
-=======
->>>>>>> bb26a960840500b95cbe6ee43c208167d46d4287
+
 	}
 	
 	public boolean diferentesCategorias(List<Producto> prods)
