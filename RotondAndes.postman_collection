@@ -209,7 +209,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "[\n  {\n    \"isIngrediente\": true,\n    \"nombreIng\":\"Arroz Blanco\",\n    \"descEsp\":\"Algo muy raro en colombia\",\n    \"descIng\":\"Something really strange in colombia\",\n    \"tipo\":\"hortaliza\"\n  },\n  {\n    \"isProducto\":true,\n    \"nombre\":\"Porcion de arroz\",\n    \"categoria\": 2,\n    \"precioVenta\": 8000,\n    \"costosProduccion\": 4000,\n    \"tipoComidaProd\": \"Exotico\",\n    \"tiempoPreparacion\": 10\n  }\n]"
+					"raw": "[\n  {\n    \"isIngrediente\": true,\n    \"nombreIng\":\"Arroz Blanco\",\n    \"descEsp\":\"Algo muy raro en colombia\",\n    \"descIng\":\"Something really strange in colombia\",\n    \"tipo\":\"hortaliza\"\n  },\n  {\n    \"isProducto\":true,\n    \"nombre\":\"Porcion de arroz\",\n    \"categoria\": 2,\n    \"precioVenta\": 8000,\n    \"costosProduccion\": 4000,\n    \"tipoComidaProd\": \"Exotico\",\n    \"tiempoPreparacion\": 10\n  },\n  {\n  \t\"esMax\": true,\n  \t\"max\": 40\n  }\n]"
 				},
 				"url": {
 					"raw": "localhost:8080/RotondAndes/rest/rotonda/productos/nuevoRestaurantePostman",
@@ -531,10 +531,10 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"ing1\":\"CORRALISIMA TODOTERRENO\",\n\t\"ing2\": \"PAPAS FRITAS\",\n\t\"adminUser\": \"juan10\",\n\t\"adminPass\": \"claveGenerica\" \n}"
+					"raw": "{\n\t\"prod1\":\"CORRALISIMA TODOTERRENO\",\n\t\"prod2\": \"PAPAS FRITAS\",\n\t\"adminUser\": \"juan10\",\n\t\"adminPass\": \"claveGenerica\" \n}"
 				},
 				"url": {
-					"raw": "localhost:8080/RotondAndes/rest/rotonda/equivalenciasIngredientes/CORRAL",
+					"raw": "localhost:8080/RotondAndes/rest/rotonda/equivalenciasProductos/CORRAL",
 					"host": [
 						"localhost"
 					],
@@ -543,7 +543,7 @@
 						"RotondAndes",
 						"rest",
 						"rotonda",
-						"equivalenciasIngredientes",
+						"equivalenciasProductos",
 						"CORRAL"
 					]
 				},

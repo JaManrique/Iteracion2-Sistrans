@@ -20,6 +20,7 @@ import vos.Producto_Menu;
 import vos.ProductosBodega;
 import vos.Restaurante;
 import vos.Restaurante_Producto;
+import vosContainers.PedidoMenu;
 
 public class DAOIter3 {
 
@@ -78,6 +79,14 @@ public class DAOIter3 {
 	public boolean esCliente(String nombre, String contrasena)throws SQLException, Exception
 	{
 		String sql="SELECT * FROM USUARIO U WHERE U.USUARIO = '"+nombre+"' AND U.CONTRASENA LIKE '"+contrasena+"' AND U.ROL LIKE 'cliente'";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+		return rs.next();
+	}
+	public boolean esAcmon(String nombre, String contraseña)throws SQLException, Exception
+	{
+		String sql="SELECT * FROM USUARIO U WHERE U.USUARIO = '"+nombre+"'"+" AND U.CONTRASEÑA = '"+contraseña+"'"+" AND U.ROL='admin DB'";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		ResultSet rs = prepStmt.executeQuery();
@@ -385,8 +394,8 @@ public class DAOIter3 {
 			{
 				String time=String.valueOf(System.currentTimeMillis());   
 
-				String sql2= "INSERT INTO CHECOUT VALUES ("+max+", "+0+", "+time+", NULL, "+cliente+")";
-				sql2+="INSERT INTO PRODUCTO_CHECOUT VALUES ("+max+", "+productosB.get(i).getNombre()+", "+restaurante+","+1+",)";
+				String sql2= "INSERT INTO CHECKOUT VALUES ("+max+", "+0+", "+time+", NULL, "+cliente+")";
+				sql2+="INSERT INTO PRODUCTO_CHECKOUT VALUES ("+max+", "+productosB.get(i).getNombre()+", "+restaurante+","+1+","+nombrePM+")";
 
 				prepStmt = conn.prepareStatement(sql2);
 				recursos.add(prepStmt);
@@ -397,8 +406,8 @@ public class DAOIter3 {
 		if(!esMenu)
 		{
 			String time=String.valueOf(System.currentTimeMillis());   
-			String sql2= "INSERT INTO CHECOUT VALUES ("+max+", "+0+", "+time+", NULL, "+cliente+")";
-			sql2+="INSERT INTO PRODUCTO_CHECOUT VALUES ("+max+", "+nombrePM+", "+restaurante+","+1+")";
+			String sql2= "INSERT INTO CHECKOUT VALUES ("+max+", "+0+", "+time+", NULL, "+cliente+")";
+			sql2+="INSERT INTO PRODUCTO_CHECKOUT VALUES ("+max+", "+nombrePM+", "+restaurante+","+1+",NULL)";
 			prepStmt = conn.prepareStatement(sql2);
 			recursos.add(prepStmt);
 			prepStmt.execute();
@@ -410,7 +419,33 @@ public class DAOIter3 {
 		Iterator<PedidoMenu> iter=pedidos.iterator();
 		while(iter.hasNext())
 		{
-			
+			PedidoMenu temp=iter.next();
+			String nombrePM=temp.getNombre();
+			boolean esMenu=temp.getEsMenu();
+			List<String> productos=temp.getAlternativos();
+			String usuario=temp.getUsuario();
+			String contr=temp.getPass();
+			String restaurante=temp.getRestaurante();
+			if(esMenu)
+			{
+				for(String prod:productos)
+				{
+					int c=cantidadEnBodega(prod, restaurante);
+					if(c==0)
+					{
+						throw new Exception("No se puede registrar el pedido ya que no esta disponible el producto: "+prod);
+					}
+				}
+			}
+			else
+			{
+				int c=cantidadEnBodega(nombrePM, restaurante);
+				if(c==0)
+				{
+					throw new Exception("No se puede registrar el pedido ya que no esta disponible el producto: "+nombrePM);
+				}
+			}
+				
 		}
 		while (iter.hasNext()) 
 		{
@@ -420,7 +455,8 @@ public class DAOIter3 {
 			List<String> productos=temp.getAlternativos();
 			String usuario=temp.getUsuario();
 			String contr=temp.getPass();
-			String restaurante;
+			String restaurante=temp.getRestaurante();
+			registrarpedidoIter3REQ14(nombrePM, esMenu, productos, usuario, contr, restaurante);
 		}
 	}
 	public void registrarServicioMesaIter3REQ16(int idCheckOut)throws SQLException, Exception
@@ -429,17 +465,73 @@ public class DAOIter3 {
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		ResultSet rs = prepStmt.executeQuery();
-		String prodNom=rs.getString("PRODUCTO_NOMBRE");
-		String restaurante=rs.getString("RESTAURANTE_NOMBRE");
-		List<String> names=new ArrayList<>();
-		names.add(prodNom);
-		List<Producto> prods=buscarProductosPorNombre(names);
-		retirarproductosbodega(restaurante, prods);
-		sql="UPDATE CHECKOUT C SET ENTREGADO=1 WHERE C.ID="+idCheckOut;
-		PreparedStatement prepStmt2 = conn.prepareStatement(sql);
-		recursos.add(prepStmt2);
-		prepStmt2.executeQuery();		
+		while (rs.next()) 
+		{
+			String prodNom=rs.getString("PRODUCTO_NOMBRE");
+			String restaurante=rs.getString("RESTAURANTE_NOMBRE");
+			List<String> names=new ArrayList<>();
+			names.add(prodNom);
+			List<Producto> prods=buscarProductosPorNombre(names);
+			retirarproductosbodega(restaurante, prods);
+			sql="UPDATE CHECKOUT C SET ENTREGADO=1 WHERE C.ID="+idCheckOut;
+			PreparedStatement prepStmt2 = conn.prepareStatement(sql);
+			recursos.add(prepStmt2);
+			prepStmt2.executeQuery();	
+		}		
 
+	}
+	public void cancelarPedido(int idCheckOut)throws SQLException, Exception
+	{
+		
+	}
+	public List<Producto> consumoClienteRegistrado(String usuario, String contraseña, String usuarioBusqueda)throws SQLException, Exception
+	{
+		List<Producto> respuesta=new ArrayList<>();
+			if(esCliente(usuario, contraseña))
+			{
+				if(usuarioBusqueda!=null)
+				{
+					throw new Exception("Usted no tiene acceso a la información de otros usuarios.");
+				}
+				respuesta=buscarProductosPorNombre(darNombresProductosCliente(usuario));
+			}
+			else if(esAcmon(usuario, contraseña)) 
+			{
+				respuesta=buscarProductosPorNombre(darNombresProductosCliente(usuarioBusqueda));
+			}
+			else
+			{
+				throw new Exception("El usuario solicitado no existe.");
+			}
+		return respuesta;
+	}
+	public List<String> darNombresProductosCliente(String usuario) throws SQLException, Exception
+	{
+		String sql="SELECT * FROM CHECKOUT C WHERE C.CLISREGS_USUARIO_CLIENTE='"+usuario+"'";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+		List<Integer>idsck=new ArrayList<>();
+		while(rs.next())
+		{
+			int a=rs.getInt("ID");
+			idsck.add(a);
+		}
+		Iterator<Integer>iter=idsck.iterator();
+		List<String>prods=new ArrayList<>();
+		while(iter.hasNext())
+		{
+			String sql2="SELECT * FROM PRODUCTO_CHECKOUT C WHERE C.CHECKOUT_ID="+iter.next();
+			PreparedStatement prepStmt2 = conn.prepareStatement(sql2);
+			recursos.add(prepStmt2);
+			ResultSet rs2 = prepStmt.executeQuery();
+			while(rs.next())
+			{
+				String b=rs2.getString("PRODUCTO_NOMBRE");
+				prods.add(b);
+			}
+		}
+		return prods;
 	}
 	
 	public boolean diferentesCategorias(List<Producto> prods)
@@ -505,7 +597,7 @@ public class DAOIter3 {
 			eqs.add(equivalencia);
 		}
 		return eqs;
-	}
+	} 	
 	public Integer cantidadEnBodega(String prod, String rest)throws SQLException, Exception
 	{
 		Integer a=0;
@@ -519,4 +611,6 @@ public class DAOIter3 {
 		}
 		return a;
 	}
+	
+	
 }
