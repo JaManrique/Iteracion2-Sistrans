@@ -581,7 +581,7 @@ public class RotondAndesTM {
 			//////transaccion
 			this.conn = darConexion();
 			dao.setConn(conn);
-			dao.registrarEquivalenciaDeProducto(productos.getProd1(), productos.getProd2(), restaurante, productos.getAdminUser(), productos.getAdminPass());
+			dao.registrarEquivalenciaDeIngrediente(productos.getProd1(), productos.getProd2(), restaurante, productos.getAdminUser(), productos.getAdminPass());
 
 		} catch (SQLException e) {
 			System.err.println("SQLException:" + e.getMessage());
