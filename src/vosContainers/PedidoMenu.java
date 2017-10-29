@@ -23,12 +23,12 @@ public class PedidoMenu {
 	@JsonProperty(value="alternativos")
 	private List<String> alternativos;
 	
-	@JsonProperty(value="restaurante")
-	private String restaurante;
+	@JsonProperty(value="tiempoPreparacion")
+	private Integer tiempoPreparacion;
 	
 	public PedidoMenu(@JsonProperty(value="usuario")String pNom, @JsonProperty(value="pass")String pPass,
 			@JsonProperty(value="nombre")String pNombre, @JsonProperty(value="esMenu")Boolean pesmenu, 
-			@JsonProperty(value="alternativos")List<String> pAlternativos, @JsonProperty(value="restaurante") String restaurante) {
+			@JsonProperty(value="alternativos")List<String> pAlternativos, @JsonProperty(value="tiempoPreparacion")Integer ptiempo) {
 		super();
 		usuario=pNom;
 		pass=pPass;
@@ -77,12 +77,14 @@ public class PedidoMenu {
 		this.alternativos = alternativos;
 	}
 
-	public String getRestaurante() {
-		return restaurante;
+	public Integer getTiempoPreparacion() {
+		return tiempoPreparacion;
 	}
 
-	public void setRestaurante(String restaurante) {
-		this.restaurante = restaurante;
-	}	
+	public void setTiempoPreparacion(Integer tiempoPreparacion) {
+		this.tiempoPreparacion = tiempoPreparacion;
+	}
+	
+	
 	
 }
