@@ -10,6 +10,7 @@ import java.util.List;
 
 import com.sun.glass.ui.Size;
 
+import oracle.net.aso.p;
 import vos.CheckOut;
 import vos.EquivalenciasProducto;
 import vos.Ingrediente;
@@ -19,6 +20,7 @@ import vos.Producto_Menu;
 import vos.ProductosBodega;
 import vos.Restaurante;
 import vos.Restaurante_Producto;
+import vosContainers.PedidoMenu;
 
 public class DAOIter3 {
 
@@ -374,7 +376,7 @@ public class DAOIter3 {
 			{
 				String time=String.valueOf(System.currentTimeMillis());   
 				String sql2= "INSERT INTO CHECOUT VALUES ("+max+", "+0+", "+time+", NULL, "+cliente+")";
-				sql2+="INSERT INTO PRODUCTO_CHECOUT VALUES ("+max+", "+productosB.get(i).getNombre()+", "+restaurante+","+1+")";
+				sql2+="INSERT INTO PRODUCTO_CHECOUT VALUES ("+max+", "+productosB.get(i).getNombre()+", "+restaurante+","+1+",)";
 				prepStmt = conn.prepareStatement(sql2);
 				recursos.add(prepStmt);
 				prepStmt.execute();
@@ -390,7 +392,26 @@ public class DAOIter3 {
 			prepStmt.execute();
 		}
 	}
-	public void registrarServicioMesaIter3REQ15(int idCheckOut)throws SQLException, Exception
+	public void registrarpedidoMesa(List<PedidoMenu> pedidos)throws SQLException, Exception
+	{
+		
+		Iterator<PedidoMenu> iter=pedidos.iterator();
+		while(iter.hasNext())
+		{
+			
+		}
+		while (iter.hasNext()) 
+		{
+			PedidoMenu temp=iter.next();
+			String nombrePM=temp.getNombre();
+			boolean esMenu=temp.getEsMenu();
+			List<String> productos=temp.getAlternativos();
+			String usuario=temp.getUsuario();
+			String contr=temp.getPass();
+			String restaurante;
+		}
+	}
+	public void registrarServicioMesaIter3REQ16(int idCheckOut)throws SQLException, Exception
 	{
 		String sql = "SELECT * FROM PRODUCTO_CHECKOUT C WHERE C.CHECKOUT_ID="+idCheckOut;
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
