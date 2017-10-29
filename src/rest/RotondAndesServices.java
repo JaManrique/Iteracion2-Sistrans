@@ -29,6 +29,8 @@ import vosContainers.PedidoMenu;
 import vosContainers.ProductoIngredientes;
 import vosContainers.ProductosServidos;
 import vosContainers.RegistroCliente;
+import vosContainers.ReporteProducto;
+import vosContainers.ReporteRestaurante;
 import vosContainers.TuplaEQIngrediente;
 import vosContainers.TuplaEQProducto;
 
@@ -389,4 +391,26 @@ public class RotondAndesServices {
 		
 	}
 	
+	
+	
+	//-------test
+	@GET
+	@Path("TEST")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response test()
+	{		
+		ReporteProducto rp1 = new ReporteProducto("PRO", 345345.3, 234, 22, 10);
+		ReporteProducto rp2 = new ReporteProducto("PRE", 63.67, 24, 10, 14);
+		ReporteProducto rp3 = new ReporteProducto("HP", 355.0, 23, 23, 0);
+		
+		List<ReporteProducto> rp = new ArrayList<>();
+		
+		rp.add(rp1);
+		rp.add(rp2);
+		rp.add(rp3);
+		
+		ReporteRestaurante rr = new ReporteRestaurante("PENE", rp);
+		
+		return Response.status(200).entity(rr).build();
+	}
 }
