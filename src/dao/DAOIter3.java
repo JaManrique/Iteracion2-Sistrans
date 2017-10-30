@@ -10,6 +10,7 @@ import java.util.List;
 
 import com.sun.glass.ui.Size;
 
+import oracle.net.aso.n;
 import oracle.net.aso.p;
 import vos.CheckOut;
 import vos.EquivalenciasProducto;
@@ -21,6 +22,8 @@ import vos.ProductosBodega;
 import vos.Restaurante;
 import vos.Restaurante_Producto;
 import vosContainers.PedidoMenu;
+import vosContainers.ReporteProducto;
+import vosContainers.ReporteRestaurante;
 
 public class DAOIter3 {
 
@@ -528,8 +531,8 @@ public class DAOIter3 {
 			String sql2="SELECT * FROM PRODUCTO_CHECKOUT C WHERE C.CHECKOUT_ID="+iter.next();
 			PreparedStatement prepStmt2 = conn.prepareStatement(sql2);
 			recursos.add(prepStmt2);
-			ResultSet rs2 = prepStmt.executeQuery();
-			while(rs.next())
+			ResultSet rs2 = prepStmt2.executeQuery();
+			while(rs2.next())
 			{
 				String b=rs2.getString("PRODUCTO_NOMBRE");
 				prods.add(b);
@@ -537,7 +540,124 @@ public class DAOIter3 {
 		}
 		return prods;
 	}
+	public List<ReporteRestaurante> darDatosProductosMasVeendidos(String usuario, String password) throws SQLException, Exception
+	{
+		List<ReporteRestaurante>resp=new ArrayList<>();
+		if(esRestaurante(usuario, password))
+		{
+			
+		}
+		else if(esAcmon(usuario, password))
+		{
+			
+		}
+		else
+		{
+			throw new Exception("Usuario o contraseña incorrectos.");
+		}
+		return resp;
+	}
 	
+	public List<ReporteProducto> darProductosCheckOutsEntregados(String restaurante)throws SQLException, Exception
+	{
+		List<Integer> prodsrest=new ArrayList<Integer>();
+		String sql="SELECT * FROM PRODUCTO_CHECKOUT WHERE RESTAURANTE_NOMBRE='"+restaurante+"'";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+		while(rs.next())
+		{
+			int b=rs.getInt("CHECKOUT_ID");
+			String sql2="SELECT * FROM CHECKOUT WHERE ID="+b+" AND ENTREGADO=1";
+			PreparedStatement prepStmt2 = conn.prepareStatement(sql2);
+			recursos.add(prepStmt2);
+			ResultSet rs2 = prepStmt2.executeQuery();
+			if(rs2.next())
+			{
+				prodsrest.add(b);
+			}
+		}
+		List<ReporteProducto> prods=new ArrayList<>();  
+		Iterator<Integer> iter=prodsrest.iterator();
+		while(iter.hasNext())
+		{
+			int b=iter.next();
+			String sql2="SELECT * FROM PRODUCTO_CHECKOUT WHERE CHECKOUT_ID="+b;
+			PreparedStatement prepStmt2 = conn.prepareStatement(sql2);
+			recursos.add(prepStmt2);
+			ResultSet rs2 = prepStmt2.executeQuery();
+			while(rs2.next())
+			{
+				String producto=rs2.getString("PRODUCTO_NOMBRE");
+				int cant=rs2.getInt("CANTIDAD_PRODUCTO");
+				for(ReporteProducto r:prods)
+				{
+					if(r.getProducto().equals(producto))
+					{
+						r.setCantidad(r.getCantidad()+cant);
+						r.setGanancia(r.getGanancia()+darganancia(producto, cant));
+					}
+					else
+					{
+						ReporteProducto nuevo=new ReporteProducto(producto, darganancia(producto, cant), cant, cant, 0);
+						prods.add(nuevo);
+					}
+				}
+			}
+		}
+		List<Integer> prodsrest2=new ArrayList<Integer>();
+		Iterator<Integer> iter2=prodsrest.iterator();
+		String sql2="SELECT * FROM PRODUCTO_CHECKOUT WHERE RESTAURANTE_NOMBRE='"+restaurante+"'";
+		PreparedStatement prepStmt2 = conn.prepareStatement(sql2);
+		recursos.add(prepStmt2);
+		ResultSet rs2 = prepStmt2.executeQuery();
+		while(rs2.next())
+		{
+			int b=rs2.getInt("CHECKOUT_ID");
+			String sql3="SELECT * FROM CHECKOUT WHERE ID="+b+" AND ENTREGADO=1 AND CLIREGS_USUARIO_CLIENTE=NULL";
+			PreparedStatement prepStmt3 = conn.prepareStatement(sql3);
+			recursos.add(prepStmt3);
+			ResultSet rs3 = prepStmt3.executeQuery();
+			if(rs3.next())
+			{
+				prodsrest2.add(b);
+			}
+		}
+		while(iter2.hasNext())
+		{
+			String s="SELECT * FROM PRODUCTO_CHECKOUT WHERE CHECKOUT_ID="+iter.next();
+			PreparedStatement prepStmt3 = conn.prepareStatement(s);
+			recursos.add(prepStmt3);
+			ResultSet rs3 = prepStmt3.executeQuery();
+			while(rs3.next())
+			{
+				String nombre=rs.getString("PRODUCTO_NOMBRE");
+				for(ReporteProducto r:prods)
+				{
+					if(r.getProducto().equals(nombre))
+					{
+						r.setCant_no_registrados(r.getCant_no_registrados()+1);
+						r.setCant_registrados(r.getCant_registrados()-1);
+					}
+				}
+			}
+		}
+		
+		return prods;
+	}
+	
+	public double darganancia(String producto, int cantidad) throws SQLException,Exception
+	{
+		double ganancia=0;
+		String sql="SELECT * FROM PRODUCTO WHERE NOMBRE='"+producto+"'";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+		double venta=rs.getDouble("PRECIOVENTA");
+		double costo=rs.getDouble("COSTOPRODUCCION");
+		ganancia=(venta-costo)*cantidad;
+		return ganancia;
+	}
 	public boolean diferentesCategorias(List<Producto> prods)
 	{
 		boolean hay=false;
