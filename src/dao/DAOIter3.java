@@ -536,16 +536,30 @@ public class DAOIter3 {
 		}
 		return prods;
 	}
-	public List<ReporteRestaurante> darDatosProductosMasVeendidos(String usuario, String password) throws SQLException, Exception
+	public List<ReporteRestaurante> darDatosProductosMasVeendidos(String usuario, String password, String restaurante) throws SQLException, Exception
 	{
 		List<ReporteRestaurante>resp=new ArrayList<>();
 		if(esRestaurante(usuario, password))
 		{
-			
+			if(restaurante==null)
+			{
+				throw new Exception("Usted no tiene acceso a la información de otros usuarios.");
+			}
+			ReporteRestaurante rest=new ReporteRestaurante(restaurante, darProductosCheckOutsEntregados(restaurante));
+			resp.add(rest);
 		}
 		else if(esAcmon(usuario, password))
 		{
-			
+			String sql="SELECT * RESTAURANTE";
+			PreparedStatement prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			ResultSet rs = prepStmt.executeQuery();
+			while(rs.next())
+			{
+				String nombre=rs.getString("NOMBRE");
+				ReporteRestaurante rest=new ReporteRestaurante(nombre, darProductosCheckOutsEntregados(nombre));
+				resp.add(rest);
+			}
 		}
 		else
 		{
