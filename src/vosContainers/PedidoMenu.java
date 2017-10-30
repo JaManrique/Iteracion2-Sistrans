@@ -22,14 +22,6 @@ public class PedidoMenu {
 	
 	@JsonProperty(value="alternativos")
 	private List<String> alternativos;
-	
-	public String getRestaurante() {
-		return restaurante;
-	}
-
-	public void setRestaurante(String restaurante) {
-		this.restaurante = restaurante;
-	}
 
 	@JsonProperty(value="restaurante")
 	private String restaurante;
@@ -86,6 +78,12 @@ public class PedidoMenu {
 		this.alternativos = alternativos;
 	}
 
-	
+	public String getRestaurante() {
+		return restaurante;
+	}
+
+	public void setRestaurante(String restaurante) {
+		this.restaurante = restaurante;
+	}
 	
 }
