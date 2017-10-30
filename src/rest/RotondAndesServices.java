@@ -479,6 +479,30 @@ public class RotondAndesServices {
 		
 	}
 	
+	
+	//RFC 8 - Consultar reporte restaurantes
+	
+	@POST
+	@Path("restaurantes/reportes/{res}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	
+	public Response cosnultarReportesRestaurante(LoginInfo login, @PathParam("res") String restau)
+	{
+		RotondAndesTM tm = new RotondAndesTM(getPath());
+		List<ReporteRestaurante> reportes = new ArrayList<>();
+		try
+		{
+			reportes = tm.consultarReporteRestaurante(login, restau);
+		}
+		catch (Exception e)
+		{
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(reportes).build();		
+	}
+	
+	
 	//-------test
 	@GET
 	@Path("TEST")

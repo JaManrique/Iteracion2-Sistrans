@@ -31,6 +31,7 @@ import vosContainers.PedidoMenu;
 import vosContainers.ProductoIngredientes;
 import vosContainers.ProductosServidos;
 import vosContainers.RegistroCliente;
+import vosContainers.ReporteRestaurante;
 import vosContainers.TuplaEQIngrediente;
 import vosContainers.TuplaEQProducto;
 
@@ -783,6 +784,8 @@ public class RotondAndesTM {
 			}
 		}
 
+		//RFC 7 - Consultar consumo cliente
+		
 		public void consultarConsumocliente(LoginInfo login) throws Exception 
 		{
 			DAOIter3 dao = new DAOIter3();	
@@ -826,6 +829,56 @@ public class RotondAndesTM {
 					throw exception;
 				}
 			}			
+		}
+
+		//RFC 8 - Consultar reporte restaurantes
+		
+		public List<ReporteRestaurante> consultarReporteRestaurante(LoginInfo login, String restaurante) throws Exception 
+		{
+			DAOIter3 dao = new DAOIter3();	
+			
+			String us = login.getUsr();
+			String ps = login.getPass();
+			Boolean admin = login.getTodo();
+			List<ReporteRestaurante> respuesta = null;
+			
+			try 
+			{
+				//////transaccion
+				this.conn = darConexion();
+				dao.setConn(conn);
+				
+				if(admin)
+				{
+					respuesta = dao.darDatosProductosMasVeendidos(us, ps, null);
+				}
+				else
+				{
+					respuesta = dao.darDatosProductosMasVeendidos(us, us, restaurante);
+				}
+
+			} catch (SQLException e) {
+				System.err.println("SQLException:" + e.getMessage());
+				e.printStackTrace();
+				throw e;
+			} catch (Exception e) {
+				System.err.println("GeneralException:" + e.getMessage());
+				e.printStackTrace();
+				throw e;
+			} finally {
+				try {
+					dao.cerrarRecursos();
+					if(this.conn!=null)
+						this.conn.close();
+				} catch (SQLException exception) {
+					System.err.println("SQLException closing resources:" + exception.getMessage());
+					exception.printStackTrace();
+					throw exception;
+				}
+			}
+			
+			return respuesta;
+			
 		}
 	
 }
