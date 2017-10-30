@@ -24,6 +24,10 @@ import vosContainers.PedidoMenu;
 
 public class DAOIter3 {
 
+	private static final int SERVIDO = 1;
+	private static final int NO_SERVIDO = 0;
+	
+	
 	/**
 	 * Arraylits de recursos que se usan para la ejecuciÃ³n de sentencias SQL
 	 */
@@ -613,4 +617,55 @@ public class DAOIter3 {
 	}
 	
 	
+	
+	//---------- RF 17
+	
+	public void cancelarPedido(Long idCheckout) throws Exception
+	{
+		int estado = -1;
+		
+		String sql = "SELECT ENTREGADO FROM CHECKOUT WHERE ID = ?";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		prepStmt.setLong(1, idCheckout);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+		
+		if(rs.next())
+		{
+			boolean servido = rs.getInt(1) == SERVIDO;
+			
+			//si no esta servido lo cancelo
+			if(!servido)
+			{
+				//Eliminar dependencias				
+				sql = "DELETE FROM MENU_CHECKOUT WHERE CHECKOUT_ID = ?";
+				prepStmt = conn.prepareStatement(sql);
+				prepStmt.setLong(1, idCheckout);
+				recursos.add(prepStmt);
+				prepStmt.execute();
+				
+				sql = "DELETE FROM PRODUCTO_CHECKOUT WHERE CHECKOUT_ID = ?";
+				prepStmt = conn.prepareStatement(sql);
+				prepStmt.setLong(1, idCheckout);
+				recursos.add(prepStmt);
+				prepStmt.execute();
+				
+				//Eliminar checkout
+				sql = "DELETE FROM CHECKOUT WHERE ID = ?";
+				prepStmt = conn.prepareStatement(sql);
+				prepStmt.setLong(1, idCheckout);
+				recursos.add(prepStmt);
+				prepStmt.execute();
+			}
+			//Si sí, excepción
+			else
+			{
+				throw new Exception("El producto ya fué servido");
+			}
+		}
+		else
+		{
+			throw new Exception("El checkout a eliminar no existe");
+		}
+	}
 }

@@ -24,6 +24,7 @@ import vos.Producto;
 import vos.Restaurante;
 import vos.Restaurante_Producto;
 import vos.Zona;
+import vosContainers.LoginInfo;
 import vosContainers.MenuProductos;
 import vosContainers.PedidoMenu;
 import vosContainers.ProductoIngredientes;
@@ -391,7 +392,92 @@ public class RotondAndesServices {
 		
 	}
 	
+	//RF 15 Registrar pedido de una mesa
 	
+	@POST
+	@Path("pedidos")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	
+	public Response registarPedidoMesa(List<PedidoMenu> pedidos)
+	{
+		RotondAndesTM tm = new RotondAndesTM(getPath());
+		try
+		{
+			tm.registrarPedidoMesa(pedidos);
+		}
+		catch (Exception e)
+		{
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(pedidos).build();
+		
+	}
+	
+	//RF 16 Registrar servicio de una mesa
+	@POST
+	@Path("pedidos/servir/{id}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	
+	public Response registarServicioMesa( @PathParam("id") String idCheckout)
+	{
+		RotondAndesTM tm = new RotondAndesTM(getPath());
+		try
+		{
+			tm.registrarServicioMesa(Integer.parseInt(idCheckout));
+		}
+		catch (Exception e)
+		{
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).build();
+		
+	}
+	
+	//RF 17 - Cancelar un pedido
+	@POST
+	@Path("pedidos/{restaurante}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	
+	public Response cancelarPedido(@PathParam("idCheckout") String idCheckout)
+	{
+		RotondAndesTM tm = new RotondAndesTM(getPath());
+		try
+		{
+			Long id = Long.parseLong(idCheckout);
+			tm.cancelarPedido(id);
+		}
+		catch (Exception e)
+		{
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).build();
+		
+	}
+	
+	//RFC - 7 consultar consumo cliente registrado
+	
+	@POST
+	@Path("cliente/consumo/{id}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	
+	public Response consultarConsumoCliente(LoginInfo login, @PathParam("id") String nomrbeCliente)
+	{
+		RotondAndesTM tm = new RotondAndesTM(getPath());		
+		try
+		{
+			tm.consultarConsumocliente(login);
+		}
+		catch (Exception e)
+		{
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).build();
+		
+	}
 	
 	//-------test
 	@GET
