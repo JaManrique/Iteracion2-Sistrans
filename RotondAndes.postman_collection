@@ -571,6 +571,51 @@
 				"header": [],
 				"body": {},
 				"url": {
+					"raw": "localhost:8080/RotondAndes/rest/rotonda/surtir/CORRAL",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"RotondAndes",
+						"rest",
+						"rotonda",
+						"surtir",
+						"CORRAL"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "testRF14 - Registrar pedido de un rpoducto",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"usuario\":\"genericUser\",\n\t\"pass\":\"Omaewamoushindeiru\",\n\t\"nombre\":\"Combo corral\",\n\t\"esMenu\":true,\n\t\"alternativos\":[\n\t\t\"corralisima\",\"gatorade\",\"aros de cebolla\"],\n\t\"restaurante\":\"CORRAL\"\n}"
+				},
+				"url": {
 					"raw": "localhost:8080/RotondAndes/rest/rotonda/pedidos/CORRAL",
 					"host": [
 						"localhost"
@@ -581,6 +626,213 @@
 						"rest",
 						"rotonda",
 						"pedidos",
+						"CORRAL"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "testRF15 - Resgistrar pedidos de una MEsa",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"pedidomesa\":[\n\t{\n\t\"usuario\":\"genericUser\",\n\t\"pass\":\"Omaewamoushindeiru\",\n\t\"nombre\":\"Combo corral\",\n\t\"esMenu\":true,\n\t\"alternativos\":[\n\t\t\"corralisima\",\"gatorade\",\"aros de cebolla\"],\n\t\"restaurante\":\"CORRAL\"\n\t},\n\t{\n\t\"usuario\":\"PABLO\",\n\t\"pass\":\"narco\",\n\t\"nombre\":\"COMBO WAFFLE\",\n\t\"esMenu\":true,\n\t\"alternativos\":[\n\t\t\"corralisima\",\"gatorade\",\"aros de cebolla\"],\n\t\"restaurante\":\"CREPES Y WAFFLES\"\n\t},\n\t{\n\t\"usuario\":\"estemen\",\n\t\"pass\":\"nocbro\",\n\t\"nombre\":\"CORRIENTAZO\",\n\t\"esMenu\":true,\n\t\"alternativos\":[\n\t\t\"corralisima\",\"gatorade\",\"aros de cebolla\"],\n\t\"restaurante\":\"RESTAURANTE DE LOS ALPES\"\n\t},\n\t{\n\t\"usuario\":\"sapo\",\n\t\"pass\":\"trucha\",\n\t\"nombre\":\"CORRIENTAZO\",\n\t\"esMenu\":true,\n\t\"alternativos\":[\n\t\t\"corralisima\",\"gatorade\",\"aros de cebolla\"],\n\t\"restaurante\":\"CORRAL\"\n\t}\n\t\t]\n\n}"
+				},
+				"url": {
+					"raw": "localhost:8080/RotondAndes/rest/rotonda/pedidos",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"RotondAndes",
+						"rest",
+						"rotonda",
+						"pedidos"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "testRF16 - Registrar servicio de una mesa",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:8080/RotondAndes/rest/rotonda/pedidos/servir/1",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"RotondAndes",
+						"rest",
+						"rotonda",
+						"pedidos",
+						"servir",
+						"1"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "testRF17 - Cancelar un pedido",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "localhost:8080/RotondAndes/rest/rotonda/pedidos/cancelar/1",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"RotondAndes",
+						"rest",
+						"rotonda",
+						"pedidos",
+						"cancelar",
+						"1"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "test RFC 7 - consultar consumo cliente registrado",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:8080/RotondAndes/rest/rotonda/cliente/consumo/gbravo",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"RotondAndes",
+						"rest",
+						"rotonda",
+						"cliente",
+						"consumo",
+						"gbravo"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "testRFC8 - Consultar reporte restaurantes",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:8080/RotondAndes/rest/rotonda/restaurantes/reportes/CORRAL",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"RotondAndes",
+						"rest",
+						"rotonda",
+						"restaurantes",
+						"reportes",
 						"CORRAL"
 					]
 				},

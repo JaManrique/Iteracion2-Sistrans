@@ -354,7 +354,7 @@ public class RotondAndesServices {
 	
 	//RF 13 - Surtir restaurante
 	@POST
-	@Path("pedidos/{restaurante}")
+	@Path("surtir/{restaurante}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response surtirRestaurante(@PathParam("restaurante") String restaurante)
 	{
@@ -437,7 +437,7 @@ public class RotondAndesServices {
 	
 	//RF 17 - Cancelar un pedido
 	@POST
-	@Path("pedidos/{restaurante}")
+	@Path("pedidos/cancelar/{idCheckout}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	
