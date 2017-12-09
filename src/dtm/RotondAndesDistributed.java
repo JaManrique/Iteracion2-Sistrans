@@ -17,6 +17,7 @@ import com.rabbitmq.jms.admin.RMQConnectionFactory;
 import jms.RotondAndesRestaurantesMDB;
 import jms.NonReplyException;
 import tm.RotondAndesTM;
+import vos.ListaProductos;
 import vos.ListaRestaurantes;
 
 
@@ -34,7 +35,7 @@ public class RotondAndesDistributed
 	
 	private TopicConnectionFactory factory;
 	
-	private RotondAndesRestaurantesMDB allVideosMQ;
+	private RotondAndesRestaurantesMDB allRestaurantesMQ;
 	
 	private static String path;
 
@@ -43,15 +44,15 @@ public class RotondAndesDistributed
 	{
 		InitialContext ctx = new InitialContext();
 		factory = (RMQConnectionFactory) ctx.lookup(MQ_CONNECTION_NAME);
-		allVideosMQ = new RotondAndesRestaurantesMDB(factory, ctx);
+		allRestaurantesMQ = new RotondAndesRestaurantesMDB(factory, ctx);
 		
-		allVideosMQ.start();
+		allRestaurantesMQ.start();
 		
 	}
 	
 	public void stop() throws JMSException
 	{
-		allVideosMQ.close();
+		allRestaurantesMQ.close();
 	}
 	
 	/**
@@ -104,9 +105,15 @@ public class RotondAndesDistributed
 		return getInstance(tm);
 	}
 	
-	public ListaRestaurantes getLocalRestaurantes() throws Exception
+	public ListaProductos getLocalProductos() throws Exception
 	{
-		return tm.getRemoteRestaurantes();
+		return tm.getLocalProductos();
+	}
+
+	public ListaProductos getRemoteProductos() throws JsonGenerationException, JsonMappingException, NoSuchAlgorithmException, JMSException, IOException, NonReplyException, InterruptedException 
+	{
+		// TODO Auto-generated method stub
+		return allRestaurantesMQ.getRemoteProductos();
 	}
 	
 }

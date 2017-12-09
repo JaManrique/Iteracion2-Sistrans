@@ -17,9 +17,12 @@ import dao.DAOMenu;
 import dao.DAOProducto;
 import dao.DAORestaurante;
 import dao.DAOZona;
+import dtm.RotondAndesDistributed;
+import jms.RotondAndesRestaurantesMDB;
 import vos.CheckOut;
 import vos.Usuario;
 import vos.Ingrediente;
+import vos.ListaProductos;
 import vos.ListaRestaurantes;
 import vos.Menu;
 import vos.Producto;
@@ -72,6 +75,10 @@ public class RotondAndesTM {
 	 * conexion a la base de datos
 	 */
 	private Connection conn;
+	/**
+	 * conexion a la base de datos distribuida.
+	 */
+	private RotondAndesDistributed dtm;
 
 	/**
 	 * Metodo constructor de la clase VideoAndesMaster, esta clase modela y contiene cada una de las 
@@ -83,6 +90,7 @@ public class RotondAndesTM {
 	public RotondAndesTM(String contextPathP) {
 		connectionDataPath = contextPathP + CONNECTION_DATA_FILE_NAME_REMOTE;
 		initConnectionData();
+		dtm=RotondAndesDistributed.getInstance(this);
 	}
 
 	/**
@@ -881,10 +889,10 @@ public class RotondAndesTM {
 			return respuesta;
 			
 		}
-		public ListaRestaurantes getRemoteRestaurantes()throws Exception
+		public ListaProductos getLocalProductos()throws Exception
 		{
-			DAORestaurante dao=new DAORestaurante();
-			List<Restaurante> respuesta = null;
+			DAOProducto dao=new DAOProducto();
+			List<Producto> respuesta = null;
 			
 			try 
 			{
@@ -892,7 +900,7 @@ public class RotondAndesTM {
 				this.conn = darConexion();
 				dao.setConn(conn);
 				
-				respuesta= dao.darRestaurantes();
+				respuesta= dao.darProductos();
 
 			} catch (SQLException e) {
 				System.err.println("SQLException:" + e.getMessage());
@@ -914,7 +922,23 @@ public class RotondAndesTM {
 				}
 			}
 			
-			return new ListaRestaurantes(respuesta);
+			return new ListaProductos(respuesta);
+		}
+		public ListaProductos getProductos()throws Exception
+		{
+			ListaProductos reml=getLocalProductos();
+			try 
+			{
+				ListaProductos resp=dtm.getRemoteProductos();
+				System.out.println("tamaño lista productos= "+ resp.getProductos().size());
+				reml.getProductos().addAll(resp.getProductos());
+			} catch (Exception e) 
+			{
+				// TODO: handle exception
+				System.out.println("TM exception: "+e.getMessage());
+				throw e;
+			}
+			return reml;
 		}
 	
 }

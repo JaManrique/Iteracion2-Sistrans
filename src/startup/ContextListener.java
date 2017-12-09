@@ -20,6 +20,7 @@ public class ContextListener implements ServletContextListener {
 	{
 		try {
 			dtm.stop();
+			System.out.println("Se ha destruido correctamente");
 		} catch (JMSException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -33,6 +34,7 @@ public class ContextListener implements ServletContextListener {
 		final ServletContext context = arg0.getServletContext();
 		RotondAndesDistributed.setPath(context.getRealPath("WEB-INF/ConnectionData"));
 		dtm = RotondAndesDistributed.getInstance();
+		System.out.println("Se ha conectado correctamente");
 	}
 
 }

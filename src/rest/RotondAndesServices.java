@@ -19,6 +19,7 @@ import tm.RotondAndesTM;
 import vos.CheckOut;
 import vos.Usuario;
 import vos.Ingrediente;
+import vos.ListaProductos;
 import vos.Menu;
 import vos.Producto;
 import vos.Restaurante;
@@ -522,5 +523,20 @@ public class RotondAndesServices {
 		ReporteRestaurante rr = new ReporteRestaurante("PENE", rp);
 		
 		return Response.status(200).entity(rr).build();
+	}
+	
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getProductosIt5()
+	{
+		RotondAndesTM tm= new RotondAndesTM(getPath());
+		ListaProductos productos;
+		try {
+			productos=tm.getProductos();
+		} catch (Exception e) {
+			// TODO: handle exception
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(productos).build();
 	}
 }

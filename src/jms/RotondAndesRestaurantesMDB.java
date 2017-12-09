@@ -40,7 +40,9 @@ import com.rabbitmq.jms.admin.RMQDestination;
 
 import dtm.RotondAndesDistributed;
 import vos.ExchangeMsg;
+import vos.ListaProductos;
 import vos.ListaRestaurantes;
+import vos.Producto;
 import vos.Restaurante;
 
 
@@ -60,7 +62,7 @@ public class RotondAndesRestaurantesMDB implements MessageListener, ExceptionLis
 	private Topic globalTopic;
 	private Topic localTopic;
 	
-	private List<Restaurante> answer = new ArrayList<Restaurante>();
+	private List<Producto> answer = new ArrayList<Producto>();
 	
 	public RotondAndesRestaurantesMDB(TopicConnectionFactory factory, InitialContext ctx) throws JMSException, NamingException 
 	{	
@@ -86,7 +88,7 @@ public class RotondAndesRestaurantesMDB implements MessageListener, ExceptionLis
 		topicConnection.close();
 	}
 	
-	public ListaRestaurantes getRemoteVideos() throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException
+	public ListaProductos getRemoteProductos() throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException
 	{
 		answer.clear();
 		String id = APP+""+System.currentTimeMillis();
@@ -112,7 +114,7 @@ public class RotondAndesRestaurantesMDB implements MessageListener, ExceptionLis
 		
 		if(answer.isEmpty())
 			throw new NonReplyException("Non Response");
-		ListaRestaurantes res = new ListaRestaurantes(answer);
+		ListaProductos res = new ListaProductos(answer);
         return res;
 	}
 	
@@ -150,15 +152,15 @@ public class RotondAndesRestaurantesMDB implements MessageListener, ExceptionLis
 				if(ex.getStatus().equals(REQUEST))
 				{
 					RotondAndesDistributed dtm = RotondAndesDistributed.getInstance();
-					ListaRestaurantes videos = dtm.getLocalRestaurantes();
+					ListaProductos videos = dtm.getLocalProductos();
 					String payload = mapper.writeValueAsString(videos);
 					Topic t = new RMQDestination("", "videos.test", ex.getRoutingKey(), "", false);
 					sendMessage(payload, REQUEST_ANSWER, t, id);
 				}
 				else if(ex.getStatus().equals(REQUEST_ANSWER))
 				{
-					ListaRestaurantes v = mapper.readValue(ex.getPayload(), ListaRestaurantes.class);
-					answer.addAll(v.getRestaurantes());
+					ListaProductos v = mapper.readValue(ex.getPayload(), ListaProductos.class);
+					answer.addAll(v.getProductos());
 				}
 			}
 			
