@@ -965,7 +965,10 @@ public class RotondAndesTM {
 
 		public Double getRentabilidadRestaurante(IntervaloFecha intervalo, String restau) {
 			
-			Double reMl = getRentabilidadRestauranteLocal(intervalo, restau);
+			String fechaIni = intervalo.getIni();
+			String fechaFin = intervalo.getFin();
+			
+			Double reMl = getRentabilidadRestauranteLocal(fechaIni, fechaFin, restau);
 			
 			try 
 			{
