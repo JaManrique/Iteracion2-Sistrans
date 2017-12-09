@@ -22,6 +22,7 @@ import jms.RotondAndesRestaurantesMDB;
 import vos.CheckOut;
 import vos.Usuario;
 import vos.Ingrediente;
+import vos.IntervaloFecha;
 import vos.ListaProductos;
 import vos.ListaRestaurantes;
 import vos.Menu;
@@ -939,6 +940,26 @@ public class RotondAndesTM {
 				throw e;
 			}
 			return reml;
+		}
+
+		public Integer getRentabilidadRestaurante(IntervaloFecha intervalo, String restau) throws Exception{
+			
+			String fechaIni = intervalo.getIni();
+			String fechaFin = intervalo.getFin();
+			
+			try 
+			{
+				ListaProductos resp=dtm.getRemoteProductos();
+				System.out.println("tamaño lista productos= "+ resp.getProductos().size());
+				//reml.getProductos().addAll(resp.getProductos());
+			} catch (Exception e) 
+			{
+				// TODO: handle exception
+				System.out.println("TM exception: "+e.getMessage());
+				throw e;
+			}
+			
+			return null;
 		}
 	
 }

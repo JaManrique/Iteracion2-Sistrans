@@ -19,6 +19,7 @@ import tm.RotondAndesTM;
 import vos.CheckOut;
 import vos.Usuario;
 import vos.Ingrediente;
+import vos.IntervaloFecha;
 import vos.ListaProductos;
 import vos.Menu;
 import vos.Producto;
@@ -526,7 +527,22 @@ public class RotondAndesServices {
 	}
 	
 	@GET
-	@Path("I5")
+	@Path("rstaurantes/{restaurante}/utilidades")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response darUtilidadRestaurante(IntervaloFecha intervalo, @PathParam("restaurante") String restau)
+	{
+		RotondAndesTM tm= new RotondAndesTM(getPath());
+		Integer productos;
+		try {
+			productos=tm.getRentabilidadRestaurante(intervalo, restau);
+		} catch (Exception e) {
+			// TODO: handle exception
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(productos).build();
+	}
+	
+	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getProductosIt5()
 	{
