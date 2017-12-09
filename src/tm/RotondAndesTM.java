@@ -942,7 +942,7 @@ public class RotondAndesTM {
 			return reml;
 		}
 
-		public Integer getRentabilidadRestaurante(IntervaloFecha intervalo, String restau) throws Exception{
+		public Integer getRentabilidadRestauranteLocal(IntervaloFecha intervalo, String restau) throws Exception{
 			
 			String fechaIni = intervalo.getIni();
 			String fechaFin = intervalo.getFin();
@@ -952,6 +952,7 @@ public class RotondAndesTM {
 				ListaProductos resp=dtm.getRemoteProductos();
 				System.out.println("tamaño lista productos= "+ resp.getProductos().size());
 				//reml.getProductos().addAll(resp.getProductos());
+				
 			} catch (Exception e) 
 			{
 				// TODO: handle exception
@@ -960,6 +961,26 @@ public class RotondAndesTM {
 			}
 			
 			return null;
+		}
+
+		public Double getRentabilidadRestaurante(IntervaloFecha intervalo, String restau) {
+			
+			Double reMl = getRentabilidadRestauranteLocal(intervalo, restau);
+			
+			try 
+			{
+				Double resp = dtm.getRemoteUtilidad();
+				System.out.println("Utilisad = "+ resp);
+				//reml.getProductos().addAll(resp.getProductos());
+				reMl = resp;
+			} catch (Exception e) 
+			{
+				// TODO: handle exception
+				System.out.println("TM exception: "+e.getMessage());
+				throw e;
+			}
+			
+			return reMl;
 		}
 	
 }

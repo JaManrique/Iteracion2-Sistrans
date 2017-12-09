@@ -532,7 +532,7 @@ public class RotondAndesServices {
 	public Response darUtilidadRestaurante(IntervaloFecha intervalo, @PathParam("restaurante") String restau)
 	{
 		RotondAndesTM tm= new RotondAndesTM(getPath());
-		Integer productos;
+		Double productos;
 		try {
 			productos=tm.getRentabilidadRestaurante(intervalo, restau);
 		} catch (Exception e) {
