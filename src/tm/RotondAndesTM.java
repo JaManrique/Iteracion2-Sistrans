@@ -942,7 +942,7 @@ public class RotondAndesTM {
 			return reml;
 		}
 
-		public Integer getRentabilidadRestauranteLocal(IntervaloFecha intervalo, String restau) throws Exception{
+		public Double getRentabilidadRestauranteLocal(IntervaloFecha intervalo, String restau) throws Exception{
 			
 			String fechaIni = intervalo.getIni();
 			String fechaFin = intervalo.getFin();
@@ -968,11 +968,11 @@ public class RotondAndesTM {
 			String fechaIni = intervalo.getIni();
 			String fechaFin = intervalo.getFin();
 			
-			Double reMl = getRentabilidadRestauranteLocal(fechaIni, fechaFin, restau);
+			Double reMl = getRentabilidadRestauranteLocal(intervalo, restau);
 			
 			try 
 			{
-				Double resp = dtm.getRemoteUtilidad();
+				Double resp = dtm.getRemoteUtilidad(fechaIni, fechaFin, restau);
 				System.out.println("Utilisad = "+ resp);
 				//reml.getProductos().addAll(resp.getProductos());
 				reMl = resp;
