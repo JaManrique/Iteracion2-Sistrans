@@ -64,6 +64,8 @@ public class RotondAndesRestaurantesMDB implements MessageListener, ExceptionLis
 	
 	private List<Producto> answer = new ArrayList<Producto>();
 	
+	private double utilidad=0.0;
+	
 	public RotondAndesRestaurantesMDB(TopicConnectionFactory factory, InitialContext ctx) throws JMSException, NamingException 
 	{	
 		topicConnection = factory.createTopicConnection();
@@ -118,6 +120,34 @@ public class RotondAndesRestaurantesMDB implements MessageListener, ExceptionLis
         return res;
 	}
 	
+	public double getRemoteUtilidad() throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException
+	{
+		String id = APP+""+System.currentTimeMillis();
+		MessageDigest md = MessageDigest.getInstance("MD5");
+		id = DatatypeConverter.printHexBinary(md.digest(id.getBytes())).substring(0, 8);
+//		id = new String(md.digest(id.getBytes()));
+		
+		sendMessage("", REQUEST, globalTopic, id);
+		boolean waiting = true;
+
+		int count = 0;
+		while(TIME_OUT != count){
+			TimeUnit.SECONDS.sleep(1);
+			count++;
+		}
+		if(count == TIME_OUT){
+			if(this.utilidad==0.0){
+				waiting = false;
+				throw new NonReplyException("Time Out - No Reply");
+			}
+		}
+		waiting = false;
+		
+		if(utilidad==0.0)
+			throw new NonReplyException("Non Response");
+		double res = utilidad;
+        return res;
+	}
 	
 	private void sendMessage(String payload, String status, Topic dest, String id) throws JMSException, JsonGenerationException, JsonMappingException, IOException
 	{
