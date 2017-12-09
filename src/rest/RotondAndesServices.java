@@ -526,6 +526,7 @@ public class RotondAndesServices {
 	}
 	
 	@GET
+	@Path("I5")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getProductosIt5()
 	{

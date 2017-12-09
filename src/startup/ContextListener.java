@@ -33,7 +33,7 @@ public class ContextListener implements ServletContextListener {
 		
 		final ServletContext context = arg0.getServletContext();
 		RotondAndesDistributed.setPath(context.getRealPath("WEB-INF/ConnectionData"));
-		dtm = RotondAndesDistributed.getInstance();
+		dtm = RotondAndesDistributed.getInstance();	 
 		System.out.println("Se ha conectado correctamente");
 	}
 
