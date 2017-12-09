@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 import vos.Producto;
 import vos.ProductosBodega;
@@ -106,5 +107,24 @@ public class DAORestaurante {
 			productos.add(new ProductosBodega(nombreRest, nombreProd, cantProd, max));
 		}
 		return productos;
+	}
+
+	public List<Restaurante> darRestaurantes()throws SQLException, Exception
+	{
+		// TODO Auto-generated method stub
+		ArrayList<Restaurante> restaurantes = new ArrayList<Restaurante>();
+		String sql = "SELECT * FROM RESTAURANTE R";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+		
+		while (rs.next()) {
+			String nombreRest = rs.getString("NOMBRE");
+			String desc = rs.getString("DESCRIPCION");
+			String tipo = rs.getString("TIPOCOMIDAREST");
+			String pag = rs.getString("PAGINAWEB");
+			restaurantes.add(new Restaurante(nombreRest, desc, tipo, pag));
+		}
+		return restaurantes;
 	}
 }

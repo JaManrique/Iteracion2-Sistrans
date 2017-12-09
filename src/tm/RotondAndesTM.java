@@ -20,6 +20,7 @@ import dao.DAOZona;
 import vos.CheckOut;
 import vos.Usuario;
 import vos.Ingrediente;
+import vos.ListaRestaurantes;
 import vos.Menu;
 import vos.Producto;
 import vos.Restaurante;
@@ -879,6 +880,41 @@ public class RotondAndesTM {
 			
 			return respuesta;
 			
+		}
+		public ListaRestaurantes getRemoteRestaurantes()throws Exception
+		{
+			DAORestaurante dao=new DAORestaurante();
+			List<Restaurante> respuesta = null;
+			
+			try 
+			{
+				//////transaccion
+				this.conn = darConexion();
+				dao.setConn(conn);
+				
+				respuesta= dao.darRestaurantes();
+
+			} catch (SQLException e) {
+				System.err.println("SQLException:" + e.getMessage());
+				e.printStackTrace();
+				throw e;
+			} catch (Exception e) {
+				System.err.println("GeneralException:" + e.getMessage());
+				e.printStackTrace();
+				throw e;
+			} finally {
+				try {
+					dao.cerrarRecursos();
+					if(this.conn!=null)
+						this.conn.close();
+				} catch (SQLException exception) {
+					System.err.println("SQLException closing resources:" + exception.getMessage());
+					exception.printStackTrace();
+					throw exception;
+				}
+			}
+			
+			return new ListaRestaurantes(respuesta);
 		}
 	
 }
