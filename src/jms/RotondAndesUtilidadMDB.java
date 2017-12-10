@@ -45,9 +45,10 @@ import vos.ListaRestaurantes;
 import vos.Producto;
 import vos.ProductoIter5;
 import vos.Restaurante;
+import vos.Utilidad;
 
 
-public class RotondAndesRestaurantesMDB implements MessageListener, ExceptionListener 
+public class RotondAndesUtilidadMDB implements MessageListener, ExceptionListener 
 {
 	public final static int TIME_OUT = 5;
 	private final static String APP = "app2";
@@ -63,10 +64,9 @@ public class RotondAndesRestaurantesMDB implements MessageListener, ExceptionLis
 	private Topic globalTopic;
 	private Topic localTopic;
 	
-	private List<ProductoIter5> answer = new ArrayList<ProductoIter5>();
+	private Utilidad utilidad;
 	
-	
-	public RotondAndesRestaurantesMDB(TopicConnectionFactory factory, InitialContext ctx) throws JMSException, NamingException 
+	public RotondAndesUtilidadMDB(TopicConnectionFactory factory, InitialContext ctx) throws JMSException, NamingException 
 	{	
 		topicConnection = factory.createTopicConnection();
 		topicSession = topicConnection.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
@@ -91,9 +91,9 @@ public class RotondAndesRestaurantesMDB implements MessageListener, ExceptionLis
 		topicConnection.close();
 	}
 	
-	public ListaProductos getRemoteProductos() throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException
+	public Utilidad getRemoteUtilidad() throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException
 	{
-		answer.clear();
+		utilidad=null;
 		String id = APP+""+System.currentTimeMillis();
 		MessageDigest md = MessageDigest.getInstance("MD5");
 		id = DatatypeConverter.printHexBinary(md.digest(id.getBytes())).substring(0, 8);
@@ -108,16 +108,17 @@ public class RotondAndesRestaurantesMDB implements MessageListener, ExceptionLis
 			count++;
 		}
 		if(count == TIME_OUT){
-			if(this.answer.isEmpty()){
+			if(this.utilidad==null){
 				waiting = false;
 				throw new NonReplyException("Time Out - No Reply");
 			}
 		}
 		waiting = false;
 		
-		if(answer.isEmpty())
+		if(utilidad==null)
 			throw new NonReplyException("Non Response");
-		ListaProductos res = new ListaProductos(answer);
+		Utilidad res = utilidad;
+		//sendMessage("QUE PASO GRAN HP", REQUEST_ANSWER, globalTopic, id);
         return res;
 	}
 	
@@ -155,7 +156,7 @@ public class RotondAndesRestaurantesMDB implements MessageListener, ExceptionLis
 				if(ex.getStatus().equals(REQUEST))
 				{
 					RotondAndesDistributed dtm = RotondAndesDistributed.getInstance();
-					ListaProductos videos = dtm.getLocalProductos();
+					Utilidad videos = dtm.getLocalUtilidad();
 					String payload = mapper.writeValueAsString(videos);
 					Topic t = new RMQDestination("", "videos.test", ex.getRoutingKey(), "", false);
 					sendMessage(payload, REQUEST_ANSWER, t, id);

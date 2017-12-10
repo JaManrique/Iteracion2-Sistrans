@@ -23,6 +23,7 @@ import dtm.RotondAndesDistributed;
 import jms.RotondAndesRestaurantesMDB;
 import vos.CheckOut;
 import vos.Usuario;
+import vos.Utilidad;
 import vos.Ingrediente;
 import vos.IntervaloFecha;
 import vos.ListaProductos;
@@ -953,13 +954,13 @@ public class RotondAndesTM {
 			return reml;
 		}
 
-		public Double getRentabilidadRestauranteLocal(IntervaloFecha intervalo, String restau) throws Exception{
+		public Utilidad getRentabilidadRestauranteLocal(IntervaloFecha intervalo, String restau) throws Exception{
 			
 			String fechaIni = intervalo.getIni();
 			String fechaFin = intervalo.getFin();
 			
 			DAOIter5 dao=new DAOIter5();
-			Double respuesta = 0.0;
+			Utilidad respuesta = null;
 			
 			try 
 			{
@@ -992,17 +993,17 @@ public class RotondAndesTM {
 			return respuesta;
 		}
 
-		public Double getRentabilidadRestaurante(IntervaloFecha intervalo, String restau) throws Exception 
+		public Utilidad getRentabilidadRestaurante(IntervaloFecha intervalo, String restau) throws Exception 
 		{
 			
 			String fechaIni = intervalo.getIni();
 			String fechaFin = intervalo.getFin();
 			
-			Double reMl = getRentabilidadRestauranteLocal(intervalo, restau);
+			Utilidad reMl = getRentabilidadRestauranteLocal(intervalo, restau);
 			
 			try 
 			{
-				Double resp = dtm.getRemoteUtilidad(fechaIni, fechaFin, restau);
+				Utilidad resp = dtm.getRemoteUtilidad(fechaIni, fechaFin, restau);
 				System.out.println("Utilisad = "+ resp);
 				//reml.getProductos().addAll(resp.getProductos());
 				reMl = resp;

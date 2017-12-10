@@ -15,10 +15,13 @@ import org.codehaus.jackson.map.JsonMappingException;
 import com.rabbitmq.jms.admin.RMQConnectionFactory;
 
 import jms.RotondAndesRestaurantesMDB;
+import jms.RotondAndesUtilidadMDB;
 import jms.NonReplyException;
 import tm.RotondAndesTM;
+import vos.IntervaloFecha;
 import vos.ListaProductos;
 import vos.ListaRestaurantes;
+import vos.Utilidad;
 
 
 
@@ -37,6 +40,8 @@ public class RotondAndesDistributed
 	
 	private RotondAndesRestaurantesMDB allRestaurantesMQ;
 	
+	private RotondAndesUtilidadMDB allUtilidadMQ;
+	
 	private static String path;
 
 
@@ -45,9 +50,9 @@ public class RotondAndesDistributed
 		InitialContext ctx = new InitialContext();
 		factory = (RMQConnectionFactory) ctx.lookup(MQ_CONNECTION_NAME);
 		allRestaurantesMQ = new RotondAndesRestaurantesMDB(factory, ctx);
-		
+		allUtilidadMQ=new RotondAndesUtilidadMDB(factory, ctx);
 		allRestaurantesMQ.start();
-		
+		allUtilidadMQ.start();
 	}
 	
 	public void stop() throws JMSException
@@ -116,10 +121,15 @@ public class RotondAndesDistributed
 		return allRestaurantesMQ.getRemoteProductos();
 	}
 
-	public double getRemoteUtilidad(String fechaIni, String fechaFin, String restau) throws JsonGenerationException, JsonMappingException, NoSuchAlgorithmException, JMSException, IOException, NonReplyException, InterruptedException 
+	public Utilidad getRemoteUtilidad(String fechaIni, String fechaFin, String restau) throws JsonGenerationException, JsonMappingException, NoSuchAlgorithmException, JMSException, IOException, NonReplyException, InterruptedException 
 	{
 		// TODO Auto-generated method stub
-		return allRestaurantesMQ.getRemoteUtilidad();
+		return allUtilidadMQ.getRemoteUtilidad();
+	}
+
+	public Utilidad getLocalUtilidad(IntervaloFecha inter, String restau) throws Exception {
+		// TODO Auto-generated method stub
+		return tm.getRentabilidadRestauranteLocal(inter, restau);
 	} 
 	
 }

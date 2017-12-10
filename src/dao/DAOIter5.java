@@ -21,6 +21,7 @@ import vos.Producto_Menu;
 import vos.ProductosBodega;
 import vos.Restaurante;
 import vos.Restaurante_Producto;
+import vos.Utilidad;
 import vosContainers.PedidoMenu;
 import vosContainers.ReporteProducto;
 import vosContainers.ReporteRestaurante;
@@ -802,14 +803,16 @@ public class DAOIter5 {
 			throw new Exception("El checkout a eliminar no existe");
 		}
 	}
-	public double darRentabilidadRestaurante(String restaurante,String fechaini, String fechafin) throws SQLException, Exception
+	public Utilidad darRentabilidadRestaurante(String restaurante,String fechaini, String fechafin) throws SQLException, Exception
 	{
+		List<String> detalle=new ArrayList<String>();
+		Utilidad temp=new Utilidad(restaurante, detalle, 0.0);
 		String sql="SELECT SUM(-PROD.COSTOPRODUCCION +PROD.PRECIOVENTA) as UTILIDAD "
 				+ "FROM PRODUCTO PROD INNER JOIN (SELECT * "
 				+ "FROM CHECKOUT C INNER JOIN PRODUCTO_CHECKOUT P ON C.ID=P.CHECKOUT_ID" + 
 				"                                        WHERE P.RESTAURANTE_NOMBRE='"+restaurante+"' "
 						+ "AND C.TIEMPOR BETWEEN '"+fechaini+"' AND '"+fechafin+"')CONS " + 
-				"ON PROD.NOMBRE=CONS.PRODUCTO_NOMBRE;";
+				"ON PROD.NOMBRE=CONS.PRODUCTO_NOMBRE";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		ResultSet rs = prepStmt.executeQuery();
@@ -818,8 +821,33 @@ public class DAOIter5 {
 		{
 			resp=rs.getDouble("UTILIDAD");
 		}
-
-		return resp;
+		temp.setUtilidad(resp);
+		String sql2="Select Producto_nombre, count(producto_nombre) AS cantidad_Vendidad, sum(PrecioVenta - Costoproduccion) AS Utilidad from" + 
+				"(" + 
+				"    select Producto_nombre from " + 
+				"    (" + 
+				"        (" + 
+				"            select Producto_nombre, checkout_id from PRODUCTO_CHECKOUT where restaurante_nombre = '"+restaurante+"'" + 
+				"        ) A" + 
+				"        INNER JOIN\r\n" + 
+				"        (" + 
+				"            select * from CHECKOUT where TIEMPOR between '"+fechaini+"' AND '"+fechafin+"'" + 
+				"        ) B" + 
+				"        ON A.CHECKOUT_ID = B.ID" + 
+				"    )" + 
+				") A INNER JOIN PRODUCTO B ON A.Producto_nombre = B.nombre" + 
+				"GROUP BY PRODUCTO_NOMBRE";
+		PreparedStatement prepStmt2 = conn.prepareStatement(sql2);
+		recursos.add(prepStmt2);
+		ResultSet rs2 = prepStmt2.executeQuery();
+		while(rs2.next())
+		{
+			String descripcion="PRODUCTO NOMBRE: "+rs2.getString("PRODUCTO_NOMBRE")+" CANTIDAD VENDIDA: "+rs2.getString("CANTIDAD_VENDIDA")+
+					" UTILIDAD PRODUCTO: "+rs.getString("UTILIDAD");
+			detalle.add(descripcion);
+		}
+		temp.setProductos(detalle);
+		return temp;
 	}
 	
 }
