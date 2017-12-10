@@ -65,6 +65,7 @@ public class RotondAndesUtilidadMDB implements MessageListener, ExceptionListene
 	private Topic localTopic;
 	
 	private Utilidad utilidad;
+	private List<Utilidad> LitsaUtilidades = new ArrayList<>();
 	
 	public RotondAndesUtilidadMDB(TopicConnectionFactory factory, InitialContext ctx) throws JMSException, NamingException 
 	{	
@@ -99,7 +100,7 @@ public class RotondAndesUtilidadMDB implements MessageListener, ExceptionListene
 		id = DatatypeConverter.printHexBinary(md.digest(id.getBytes())).substring(0, 8);
 //		id = new String(md.digest(id.getBytes()));
 		
-		sendMessage("", REQUEST, globalTopic, id);
+		sendMessage(param0 + "," + param1 + "," param 2, REQUEST, globalTopic, id);
 		boolean waiting = true;
 
 		int count = 0;
@@ -155,16 +156,23 @@ public class RotondAndesUtilidadMDB implements MessageListener, ExceptionListene
 			{
 				if(ex.getStatus().equals(REQUEST))
 				{
+					String metodo = ex.getPayload().split("///")[0];
+					String[] params = ex.getPayload().split("///")[1].split(","); 
+					
 					RotondAndesDistributed dtm = RotondAndesDistributed.getInstance();
-					Utilidad videos = dtm.getLocalUtilidad();
-					String payload = mapper.writeValueAsString(videos);
+					Utilidad utilidad = dtm.getLocalUtilidad(params[0], params[1] /*los que necesiten*/);
+					String payload = mapper.writeValueAsString(utilidad);
 					Topic t = new RMQDestination("", "videos.test", ex.getRoutingKey(), "", false);
 					sendMessage(payload, REQUEST_ANSWER, t, id);
 				}
 				else if(ex.getStatus().equals(REQUEST_ANSWER))
 				{
-					ListaProductos v = mapper.readValue(ex.getPayload(), ListaProductos.class);
-					answer.addAll(v.getProductos());
+					Utilidad v = mapper.readValue(ex.getPayload(), Utilidad.class);
+					//Si lo que me llegó está decente
+					if(v != null && v.getUtilidad() != null && v.getNombre() != null & v.getDetalleProductos() != null)
+					{
+						LitsaUtilidades.add(v);
+					}
 				}
 			}
 			
