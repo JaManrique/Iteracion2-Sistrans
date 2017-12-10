@@ -527,7 +527,7 @@ public class RotondAndesServices {
 	}
 	
 	@GET
-	@Path("rstaurantes/{restaurante}/utilidades")
+	@Path("restaurantes/{restaurante}/utilidades")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response darUtilidadRestaurante(IntervaloFecha intervalo, @PathParam("restaurante") String restau)
 	{
@@ -543,6 +543,7 @@ public class RotondAndesServices {
 	}
 	
 	@GET
+	@Path("/iteracion5/productos")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getProductosIt5()
 	{
