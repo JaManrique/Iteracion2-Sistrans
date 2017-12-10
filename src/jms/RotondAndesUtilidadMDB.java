@@ -156,8 +156,7 @@ public class RotondAndesUtilidadMDB implements MessageListener, ExceptionListene
 			{
 				if(ex.getStatus().equals(REQUEST))
 				{
-					String metodo = ex.getPayload().split("///")[0];
-					String[] params = ex.getPayload().split("///")[1].split(","); 
+					String[] params = ex.getPayload().split(","); 
 					
 					RotondAndesDistributed dtm = RotondAndesDistributed.getInstance();
 					Utilidad utilidad = dtm.getLocalUtilidad(params[0], params[1] /*los que necesiten*/);
