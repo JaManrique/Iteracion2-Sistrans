@@ -49,7 +49,7 @@ import vos.Restaurante;
 public class RotondAndesRestaurantesMDB implements MessageListener, ExceptionListener 
 {
 	public final static int TIME_OUT = 5;
-	private final static String APP = "app1";
+	private final static String APP = "app2";
 	
 	private final static String GLOBAL_TOPIC_NAME = "java:global/RMQTopicAllVideos";
 	private final static String LOCAL_TOPIC_NAME = "java:global/RMQAllVideosLocal";
@@ -81,6 +81,7 @@ public class RotondAndesRestaurantesMDB implements MessageListener, ExceptionLis
 	
 	public void start() throws JMSException
 	{
+		System.out.println("SE PRENDIO ESTA MIERDA");
 		topicConnection.start();
 	}
 	
@@ -147,6 +148,7 @@ public class RotondAndesRestaurantesMDB implements MessageListener, ExceptionLis
 		if(utilidad==0.0)
 			throw new NonReplyException("Non Response");
 		double res = utilidad;
+		//sendMessage("QUE PASO GRAN HP", REQUEST_ANSWER, globalTopic, id);
         return res;
 	}
 	
@@ -163,6 +165,7 @@ public class RotondAndesRestaurantesMDB implements MessageListener, ExceptionLis
 		System.out.println(envelope);
 		txtMsg.setText(envelope);
 		topicPublisher.publish(txtMsg);
+		System.out.println("Se usó esta verga no joda.com: " + payload + " // " + dest + " // " + id);
 	}
 	
 	@Override
@@ -172,7 +175,7 @@ public class RotondAndesRestaurantesMDB implements MessageListener, ExceptionLis
 		try 
 		{
 			String body = txt.getText();
-			System.out.println(body);
+			System.out.println("JIJIJIJUEPUTI: " + body);
 			ObjectMapper mapper = new ObjectMapper();
 			ExchangeMsg ex = mapper.readValue(body, ExchangeMsg.class);
 			String id = ex.getMsgId();
