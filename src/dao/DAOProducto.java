@@ -124,8 +124,8 @@ public class DAOProducto {
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		ResultSet rs = prepStmt.executeQuery();
-
-		while (rs.next()) {
+		int cont=0;
+		while (rs.next()&&cont<5) {
 			String nombre = rs.getString("NOMBRE");
 			Integer categoria = rs.getInt("CATEGORIA");
 			Integer precioVenta = rs.getInt("PRECIOVENTA");
@@ -133,6 +133,7 @@ public class DAOProducto {
 			String tipoComidaProd = rs.getString("TIPOCOMIDAPROD");
 			Integer tiempoDePreparacion = rs.getInt("TIEMPOPREPARACION");
 			productos.add(new Producto(nombre, categoria, precioVenta, costosProduccion, tipoComidaProd,tiempoDePreparacion));
+			cont++;
 		}
 		return productos;
 	}

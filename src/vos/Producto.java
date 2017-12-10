@@ -12,27 +12,27 @@ public class Producto {
 	@JsonProperty(value="categoria")
 	private Integer categoria;
 	
-	@JsonProperty(value="precioVenta")
-	private Integer precioVenta;
+	@JsonProperty(value="precio")
+	private Integer precio;
 	
-	@JsonProperty(value="costosProduccion")
-	private Integer costosProduccion;
+	@JsonProperty(value="costo")
+	private Integer costo;
 	
-	@JsonProperty(value="tipoComidaProd")
-	private String tipoComidaProd;
+	@JsonProperty(value="tipo")
+	private String tipo;
 	
 	@JsonProperty(value="tiempoPreparacion")
 	private Integer tiempoPreparacion;
 	
 	public Producto(@JsonProperty(value="nombre")String pNom, @JsonProperty(value="categoria")Integer pCat,
-			@JsonProperty(value="precioVenta")Integer pVenta, @JsonProperty(value="costosProduccion")Integer pProd, 
-			@JsonProperty(value="tipoComidaProd")String ptipo, @JsonProperty(value="tiempoPreparacion")Integer ptiempo) {
+			@JsonProperty(value="precio")Integer pVenta, @JsonProperty(value="costo")Integer pProd, 
+			@JsonProperty(value="tipo")String ptipo, @JsonProperty(value="tiempoPreparacion")Integer ptiempo) {
 		super();
 		nombre=pNom;
 		categoria=pCat;
-		precioVenta=pVenta;
-		costosProduccion=pProd;
-		tipoComidaProd=ptipo;
+		precio=pVenta;
+		costo=pProd;
+		tipo=ptipo;
 		tiempoPreparacion=ptiempo;
 	}
 	public String getNombre() {
@@ -52,27 +52,27 @@ public class Producto {
 	}
 
 	public Integer getPrecioVenta() {
-		return precioVenta;
+		return precio;
 	}
 
 	public void setPrecioVenta(Integer precioVenta) {
-		this.precioVenta = precioVenta;
+		this.precio = precioVenta;
 	}
 
 	public Integer getCostosDeProduccion() {
-		return costosProduccion;
+		return costo;
 	}
 
 	public void setCostosDeProduccion(Integer costosDeProduccion) {
-		this.costosProduccion = costosDeProduccion;
+		this.costo = costosDeProduccion;
 	}
 
 	public String getTipoComidaProd() {
-		return tipoComidaProd;
+		return tipo;
 	}
 
 	public void setTipoComidaProd(String tipoComidaProd) {
-		this.tipoComidaProd = tipoComidaProd;
+		this.tipo = tipoComidaProd;
 	}
 
 	public Integer getTiempoDePreparacion() {

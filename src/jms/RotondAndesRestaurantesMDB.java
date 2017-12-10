@@ -43,6 +43,7 @@ import vos.ExchangeMsg;
 import vos.ListaProductos;
 import vos.ListaRestaurantes;
 import vos.Producto;
+import vos.ProductoIter5;
 import vos.Restaurante;
 
 
@@ -62,7 +63,7 @@ public class RotondAndesRestaurantesMDB implements MessageListener, ExceptionLis
 	private Topic globalTopic;
 	private Topic localTopic;
 	
-	private List<Producto> answer = new ArrayList<Producto>();
+	private List<ProductoIter5> answer = new ArrayList<ProductoIter5>();
 	
 	private double utilidad=0.0;
 	
@@ -156,7 +157,7 @@ public class RotondAndesRestaurantesMDB implements MessageListener, ExceptionLis
 	{
 		ObjectMapper mapper = new ObjectMapper();
 		System.out.println(id);
-		ExchangeMsg msg = new ExchangeMsg("videos.general.app1", APP, payload, status, id);
+		ExchangeMsg msg = new ExchangeMsg("videos.general.app2", APP, payload, status, id);
 		TopicPublisher topicPublisher = topicSession.createPublisher(dest);
 		topicPublisher.setDeliveryMode(DeliveryMode.PERSISTENT);
 		TextMessage txtMsg = topicSession.createTextMessage();

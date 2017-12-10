@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
@@ -28,6 +29,7 @@ import vos.ListaProductos;
 import vos.ListaRestaurantes;
 import vos.Menu;
 import vos.Producto;
+import vos.ProductoIter5;
 import vos.Restaurante;
 import vos.Restaurante_Producto;
 import vos.Zona;
@@ -894,15 +896,23 @@ public class RotondAndesTM {
 		public ListaProductos getLocalProductos()throws Exception
 		{
 			DAOProducto dao=new DAOProducto();
-			List<Producto> respuesta = null;
-			
+			List<ProductoIter5> respuesta = new ArrayList<ProductoIter5>();;
+			List<Producto> resp=null;
 			try 
 			{
 				//////transaccion
 				this.conn = darConexion();
 				dao.setConn(conn);
 				
-				respuesta= dao.darProductos();
+				resp= dao.darProductos();
+				Iterator<Producto> iter=resp.iterator();
+				while(iter.hasNext())
+				{
+					Producto temp=iter.next();
+					ProductoIter5 it5=new ProductoIter5("Rotonda 2",temp.getNombre(),temp.getCategoria(),temp.getPrecioVenta(),temp.getCostosDeProduccion(),
+							temp.getTipoComidaProd(),temp.getTiempoDePreparacion(),null,null,null,null,0);
+					respuesta.add(it5);
+				}
 
 			} catch (SQLException e) {
 				System.err.println("SQLException:" + e.getMessage());
