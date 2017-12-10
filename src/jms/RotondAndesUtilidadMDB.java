@@ -92,7 +92,7 @@ public class RotondAndesUtilidadMDB implements MessageListener, ExceptionListene
 		topicConnection.close();
 	}
 	
-	public Utilidad getRemoteUtilidad() throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException
+	public List<Utilidad> getRemoteUtilidad() throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException
 	{
 		utilidad=null;
 		String id = APP+""+System.currentTimeMillis();
@@ -120,7 +120,7 @@ public class RotondAndesUtilidadMDB implements MessageListener, ExceptionListene
 			throw new NonReplyException("Non Response");
 		Utilidad res = utilidad;
 		//sendMessage("QUE PASO GRAN HP", REQUEST_ANSWER, globalTopic, id);
-        return res;
+        return LitsaUtilidades;
 	}
 	
 	private void sendMessage(String payload, String status, Topic dest, String id) throws JMSException, JsonGenerationException, JsonMappingException, IOException
