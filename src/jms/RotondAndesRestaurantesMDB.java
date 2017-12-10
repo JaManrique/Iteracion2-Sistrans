@@ -49,14 +49,6 @@ import vos.Restaurante;
 
 public class RotondAndesRestaurantesMDB implements MessageListener, ExceptionListener 
 {
-	
-	/*
-	 *	CONSTANTES DE PROTOCOLO PARA PARAMETROS ENTRE SESIONES
-	 */
-	
-	private static final String PRODUCTOS = "PRODUCTOS";
-	private static final String UTILIDAD = "PRODUCTOS";
-	
 	public final static int TIME_OUT = 5;
 	private final static String APP = "app2";
 	
@@ -162,25 +154,11 @@ public class RotondAndesRestaurantesMDB implements MessageListener, ExceptionLis
 			{
 				if(ex.getStatus().equals(REQUEST))
 				{
-					
-					String metodo = ex.getPayload().split("///")[0];
-					String[] params = ex.getPayload().split("///")[1].split(","); 
-					if(metodo == PRODUCTOS)
-					{
-						RotondAndesDistributed dtm = RotondAndesDistributed.getInstance();
-						ListaUtilidad utilidad = dtm.getLocalUtilidad(params[0], params[1] /*los que necesiten*/);
-						String payload = mapper.writeValueAsString(utilidad);
-						Topic t = new RMQDestination("", "videos.test", ex.getRoutingKey(), "", false);
-						sendMessage(payload, REQUEST_ANSWER, t, id);
-					}
-					else if(metodo == UTILIDAD)
-					{
-						RotondAndesDistributed dtm = RotondAndesDistributed.getInstance();
-						ListaProductos videos = dtm.getLocalProductos();
-						String payload = mapper.writeValueAsString(videos);
-						Topic t = new RMQDestination("", "videos.test", ex.getRoutingKey(), "", false);
-						sendMessage(payload, REQUEST_ANSWER, t, id);
-					}
+					RotondAndesDistributed dtm = RotondAndesDistributed.getInstance();
+					ListaProductos videos = dtm.getLocalProductos();
+					String payload = mapper.writeValueAsString(videos);
+					Topic t = new RMQDestination("", "videos.test", ex.getRoutingKey(), "", false);
+					sendMessage(payload, REQUEST_ANSWER, t, id);
 				}
 				else if(ex.getStatus().equals(REQUEST_ANSWER))
 				{
