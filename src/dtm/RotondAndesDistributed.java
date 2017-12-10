@@ -115,10 +115,6 @@ public class RotondAndesDistributed
 		// TODO Auto-generated method stub
 		return allRestaurantesMQ.getRemoteProductos();
 	}
-	public double getLocalUtilidad() throws Exception
-	{
-		return tm.getRentabilidadRestauranteLocal(intervalo, restau);
-	}
 
 	public double getRemoteUtilidad(String fechaIni, String fechaFin, String restau) throws JsonGenerationException, JsonMappingException, NoSuchAlgorithmException, JMSException, IOException, NonReplyException, InterruptedException 
 	{

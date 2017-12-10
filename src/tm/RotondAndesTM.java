@@ -13,6 +13,7 @@ import dao.DAOCheckOut;
 import dao.DAOClientesRegistrados;
 import dao.DAOIngrediente;
 import dao.DAOIter3;
+import dao.DAOIter5;
 import dao.DAOMenu;
 import dao.DAOProducto;
 import dao.DAORestaurante;
@@ -947,23 +948,42 @@ public class RotondAndesTM {
 			String fechaIni = intervalo.getIni();
 			String fechaFin = intervalo.getFin();
 			
+			DAOIter5 dao=new DAOIter5();
+			Double respuesta = 0.0;
+			
 			try 
 			{
-				ListaProductos resp=dtm.getRemoteProductos();
-				System.out.println("tamaño lista productos= "+ resp.getProductos().size());
-				//reml.getProductos().addAll(resp.getProductos());
+				//////transaccion
+				this.conn = darConexion();
+				dao.setConn(conn);
 				
-			} catch (Exception e) 
-			{
-				// TODO: handle exception
-				System.out.println("TM exception: "+e.getMessage());
+				respuesta= dao.darRentabilidadRestaurante(restau, fechaIni, fechaFin);
+
+			} catch (SQLException e) {
+				System.err.println("SQLException:" + e.getMessage());
+				e.printStackTrace();
 				throw e;
+			} catch (Exception e) {
+				System.err.println("GeneralException:" + e.getMessage());
+				e.printStackTrace();
+				throw e;
+			} finally {
+				try {
+					dao.cerrarRecursos();
+					if(this.conn!=null)
+						this.conn.close();
+				} catch (SQLException exception) {
+					System.err.println("SQLException closing resources:" + exception.getMessage());
+					exception.printStackTrace();
+					throw exception;
+				}
 			}
 			
-			return null;
+			return respuesta;
 		}
 
-		public Double getRentabilidadRestaurante(IntervaloFecha intervalo, String restau) {
+		public Double getRentabilidadRestaurante(IntervaloFecha intervalo, String restau) throws Exception 
+		{
 			
 			String fechaIni = intervalo.getIni();
 			String fechaFin = intervalo.getFin();

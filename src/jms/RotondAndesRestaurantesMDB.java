@@ -120,8 +120,9 @@ public class RotondAndesRestaurantesMDB implements MessageListener, ExceptionLis
         return res;
 	}
 	
-	public double getRemoteUtilidad() throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException
+	public Double getRemoteUtilidad() throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException
 	{
+		utilidad=0.0;
 		String id = APP+""+System.currentTimeMillis();
 		MessageDigest md = MessageDigest.getInstance("MD5");
 		id = DatatypeConverter.printHexBinary(md.digest(id.getBytes())).substring(0, 8);
