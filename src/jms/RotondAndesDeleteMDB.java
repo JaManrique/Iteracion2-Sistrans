@@ -11,7 +11,13 @@ import javax.jms.DeliveryMode;
 import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
 import javax.jms.Message;
+import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
+import javax.jms.Queue;
+import javax.jms.QueueConnection;
+import javax.jms.QueueConnectionFactory;
+import javax.jms.QueueReceiver;
+import javax.jms.QueueSession;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 import javax.jms.Topic;
@@ -29,47 +35,53 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
+import com.rabbitmq.jms.admin.RMQConnectionFactory;
 import com.rabbitmq.jms.admin.RMQDestination;
 
 import dtm.RotondAndesDistributed;
 import vos.ExchangeMsg;
 import vos.IntervaloFecha;
+import vos.ListaProductos;
+import vos.ListaRestaurantes;
 import vos.ListaUtilidad;
+import vos.Producto;
+import vos.ProductoIter5;
+import vos.Restaurante;
 import vos.Utilidad;
 
-public class RotondAndesUtilidadMDB implements MessageListener, ExceptionListener 
-{
-	public final static int TIME_OUT = 50;
-	private final static String TOPIC_NAME = "java:global/RMQTopicTerrorVideos";
-	private final static String GLOBAL_TOPIC_NAME = "java:global/RMQTopicAllTerrorVideos";
 
-	private static final String APP = "app2";
+public class RotondAndesDeleteMDB implements MessageListener, ExceptionListener 
+{
+	public final static int TIME_OUT = 5;
+	private final static String APP = "app2";
+	
+	private final static String GLOBAL_TOPIC_NAME = "java:global/RMQTopicAllVideos";
+	private final static String LOCAL_TOPIC_NAME = "java:global/RMQTopicTerrorVideos";
 	
 	private final static String REQUEST = "REQUEST";
 	private final static String REQUEST_ANSWER = "REQUEST_ANSWER";
-
+	
 	private TopicConnection topicConnection;
 	private TopicSession topicSession;
 	private Topic globalTopic;
-	private Topic topic;
-	
-	public List<Utilidad> answer = new ArrayList<>();
-
-	public RotondAndesUtilidadMDB(TopicConnectionFactory factory, InitialContext ctx) throws JMSException, NamingException
-	{
+	private Topic localTopic;
+		
+	public RotondAndesDeleteMDB(TopicConnectionFactory factory, InitialContext ctx) throws JMSException, NamingException 
+	{	
 		topicConnection = factory.createTopicConnection();
 		topicSession = topicConnection.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
 		globalTopic = (RMQDestination) ctx.lookup(GLOBAL_TOPIC_NAME);
 		TopicSubscriber topicSubscriber =  topicSession.createSubscriber(globalTopic);
 		topicSubscriber.setMessageListener(this);
-		topic = (RMQDestination) ctx.lookup(TOPIC_NAME);
-		topicSubscriber =  topicSession.createSubscriber(topic);
+		localTopic = (RMQDestination) ctx.lookup(LOCAL_TOPIC_NAME); 
+		topicSubscriber =  topicSession.createSubscriber(localTopic);
 		topicSubscriber.setMessageListener(this);
 		topicConnection.setExceptionListener(this);
 	}
-
+	
 	public void start() throws JMSException
 	{
+		System.out.println("SE PRENDIO ESTA MIERDA");
 		topicConnection.start();
 	}
 	
@@ -78,43 +90,23 @@ public class RotondAndesUtilidadMDB implements MessageListener, ExceptionListene
 		topicSession.close();
 		topicConnection.close();
 	}
-	
-	public ListaUtilidad getRemoteUtilidad(String restaurante, String fechaI,String fechaF) throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException
-	{
-		answer.clear();
-		String id = APP+""+System.currentTimeMillis();
-		MessageDigest md = MessageDigest.getInstance("MD5");
-		id = DatatypeConverter.printHexBinary(md.digest(id.getBytes())).substring(0, 8);
-		//id = new String(md.digest(id.getBytes()));
 		
-		sendMessage(restaurante+","+fechaI+","+fechaF, REQUEST, topic, id);
-		System.out.println("Mensaje Enviado");
-		boolean waiting = true;
-
-		int count = 0;
-		while(TIME_OUT != count){
-			TimeUnit.SECONDS.sleep(1);
-			count++;
-		}
-		if(count == TIME_OUT){
-			if(this.answer == null){
-				waiting = false;
-				throw new NonReplyException("Time Out - No Reply");
-			}
-		}
-		waiting = false;
-		if(answer == null)
-			throw new NonReplyException("Non Response");
-		ListaUtilidad util = new ListaUtilidad(answer);
-        return util;
+	private void sendMessage(String payload, String status, Topic dest, String id) throws JMSException, JsonGenerationException, JsonMappingException, IOException
+	{
+		ObjectMapper mapper = new ObjectMapper();
+		System.out.println(id);
+		ExchangeMsg msg = new ExchangeMsg("videos.general.app2", APP, payload, status, id);
+		TopicPublisher topicPublisher = topicSession.createPublisher(dest);
+		topicPublisher.setDeliveryMode(DeliveryMode.PERSISTENT);
+		TextMessage txtMsg = topicSession.createTextMessage();
+		txtMsg.setJMSType("TextMessage");
+		String envelope = mapper.writeValueAsString(msg);
+		System.out.println(envelope);
+		txtMsg.setText(envelope);
+		topicPublisher.publish(txtMsg);
+		System.out.println("Se usó esta verga no joda.com: " + payload + " // " + dest + " // " + id);
 	}
 	
-	@Override
-	public void onException(JMSException exception) 
-	{
-		System.out.println(exception);		
-	}
-
 	@Override
 	public void onMessage(Message message) 
 	{
@@ -122,7 +114,7 @@ public class RotondAndesUtilidadMDB implements MessageListener, ExceptionListene
 		try 
 		{
 			String body = txt.getText();
-			System.out.println(body);
+			System.out.println("JIJIJIJUEPUTI: " + body);
 			ObjectMapper mapper = new ObjectMapper();
 			ExchangeMsg ex = mapper.readValue(body, ExchangeMsg.class);
 			String id = ex.getMsgId();
@@ -130,21 +122,24 @@ public class RotondAndesUtilidadMDB implements MessageListener, ExceptionListene
 			System.out.println(ex.getStatus());
 			if(!ex.getSender().equals(APP))
 			{
-				
-				String[] metodo = ex.getPayload().split(",");
 				if(ex.getStatus().equals(REQUEST))
 				{
+					String[] params = ex.getPayload().split(","); 
+					
 					RotondAndesDistributed dtm = RotondAndesDistributed.getInstance();
-					IntervaloFecha f=new IntervaloFecha(metodo[1],  metodo[2]);
-					ListaUtilidad uti = dtm.getLocalUtilidad(f,metodo[2]);	
-					String payload = mapper.writeValueAsString(uti);
+					String  s=dtm.deleteLocalRestaurante(params[0]);
+					String payload = mapper.writeValueAsString(s);
 					Topic t = new RMQDestination("", "videos.test", ex.getRoutingKey(), "", false);
 					sendMessage(payload, REQUEST_ANSWER, t, id);
 				}
 				else if(ex.getStatus().equals(REQUEST_ANSWER))
 				{
 					Utilidad v = mapper.readValue(ex.getPayload(), Utilidad.class);
-					answer.add(v);
+					//Si lo que me llegó está decente
+					if(v != null && v.getUtilidad() != null && v.getNombre() != null & v.getDetalleProductos() != null)
+					{
+						LitsaUtilidades.add(v);
+					}
 				}
 			}
 			
@@ -166,23 +161,11 @@ public class RotondAndesUtilidadMDB implements MessageListener, ExceptionListene
 		}
 		
 	}
-	
-	private void sendMessage(String payload, String status, Topic dest, String id) throws JMSException, JsonGenerationException, JsonMappingException, IOException
-	{
-		ObjectMapper mapper = new ObjectMapper();		
-		System.out.println(id);
-		ExchangeMsg msg = new ExchangeMsg("videos.terror.app2", APP, payload, status, id);
-		TopicPublisher topicPublisher = topicSession.createPublisher(dest);
-		topicPublisher.setDeliveryMode(DeliveryMode.PERSISTENT);
-		TextMessage txtMsg = topicSession.createTextMessage();
-		txtMsg.setJMSType("TextMessage");
-		String envelope = mapper.writeValueAsString(msg);
-		System.out.println(envelope);
-		txtMsg.setText(envelope);
-		topicPublisher.publish(txtMsg);
 
+	@Override
+	public void onException(JMSException exception) 
+	{
+		System.out.println(exception);
 	}
-	
-	
-	
+
 }

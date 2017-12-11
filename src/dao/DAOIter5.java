@@ -803,8 +803,9 @@ public class DAOIter5 {
 			throw new Exception("El checkout a eliminar no existe");
 		}
 	}
-	public Utilidad darRentabilidadRestaurante(String restaurante,String fechaini, String fechafin) throws SQLException, Exception
+	public List<Utilidad> darRentabilidadRestaurante(String restaurante,String fechaini, String fechafin) throws SQLException, Exception
 	{
+		List<Utilidad> respuesta=new ArrayList<Utilidad>();
 		List<String> detalle=new ArrayList<String>();
 		Utilidad temp=new Utilidad(restaurante, detalle, 0.0);
 		String sql="SELECT SUM(-PROD.COSTOPRODUCCION +PROD.PRECIOVENTA) as UTILIDAD "
@@ -843,11 +844,12 @@ public class DAOIter5 {
 		while(rs2.next())
 		{
 			String descripcion="PRODUCTO NOMBRE: "+rs2.getString("PRODUCTO_NOMBRE")+" CANTIDAD VENDIDA: "+rs2.getString("CANTIDAD_VENDIDA")+
-					" UTILIDAD PRODUCTO: "+rs.getString("UTILIDAD");
+					" UTILIDAD PRODUCTO: "+rs2.getString("UTILIDAD");
 			detalle.add(descripcion);
 		}
 		temp.setProductos(detalle);
-		return temp;
+		respuesta.add(temp);
+		return respuesta;
 	}
 	
 }

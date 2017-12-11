@@ -28,6 +28,7 @@ import vos.Ingrediente;
 import vos.IntervaloFecha;
 import vos.ListaProductos;
 import vos.ListaRestaurantes;
+import vos.ListaUtilidad;
 import vos.Menu;
 import vos.Producto;
 import vos.ProductoIter5;
@@ -954,13 +955,13 @@ public class RotondAndesTM {
 			return reml;
 		}
 
-		public Utilidad getRentabilidadRestauranteLocal(IntervaloFecha intervalo, String restau) throws Exception{
+		public ListaUtilidad getRentabilidadRestauranteLocal(IntervaloFecha intervalo, String restau) throws Exception{
 			
 			String fechaIni = intervalo.getIni();
 			String fechaFin = intervalo.getFin();
 			
 			DAOIter5 dao=new DAOIter5();
-			Utilidad respuesta = null;
+			List<Utilidad> respuesta = null;
 			
 			try 
 			{
@@ -989,21 +990,21 @@ public class RotondAndesTM {
 					throw exception;
 				}
 			}
-			
-			return respuesta;
+			ListaUtilidad u=new ListaUtilidad(respuesta);
+			return u;
 		}
 
-		public Utilidad getRentabilidadRestaurante(IntervaloFecha intervalo, String restau) throws Exception 
+		public ListaUtilidad getRentabilidadRestaurante(IntervaloFecha intervalo, String restau) throws Exception 
 		{
 			
 			String fechaIni = intervalo.getIni();
 			String fechaFin = intervalo.getFin();
 			
-			Utilidad reMl = getRentabilidadRestauranteLocal(intervalo, restau);
+			ListaUtilidad reMl = getRentabilidadRestauranteLocal(intervalo, restau);
 			
 			try 
 			{
-				Utilidad resp = dtm.getRemoteUtilidad(fechaIni, fechaFin, restau);
+				ListaUtilidad resp = dtm.getRemoteUtilidad(fechaIni, fechaFin, restau);
 				System.out.println("Utilisad = "+ resp);
 				//reml.getProductos().addAll(resp.getProductos());
 				reMl = resp;

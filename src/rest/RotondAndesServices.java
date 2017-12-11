@@ -22,6 +22,7 @@ import vos.Utilidad;
 import vos.Ingrediente;
 import vos.IntervaloFecha;
 import vos.ListaProductos;
+import vos.ListaUtilidad;
 import vos.Menu;
 import vos.Producto;
 import vos.Restaurante;
@@ -533,7 +534,7 @@ public class RotondAndesServices {
 	public Response darUtilidadRestaurante(IntervaloFecha intervalo, @PathParam("restaurante") String restau)
 	{
 		RotondAndesTM tm= new RotondAndesTM(getPath());
-		Utilidad productos;
+		ListaUtilidad productos;
 		try {
 			productos=tm.getRentabilidadRestaurante(intervalo, restau);
 		} catch (Exception e) {

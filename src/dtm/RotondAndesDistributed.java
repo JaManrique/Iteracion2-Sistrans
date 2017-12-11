@@ -2,6 +2,7 @@ package dtm;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 import javax.jms.JMSException;
 import javax.jms.QueueConnectionFactory;
@@ -21,6 +22,7 @@ import tm.RotondAndesTM;
 import vos.IntervaloFecha;
 import vos.ListaProductos;
 import vos.ListaRestaurantes;
+import vos.ListaUtilidad;
 import vos.Utilidad;
 
 
@@ -58,6 +60,7 @@ public class RotondAndesDistributed
 	public void stop() throws JMSException
 	{
 		allRestaurantesMQ.close();
+		allUtilidadMQ.close();
 	}
 	
 	/**
@@ -121,13 +124,13 @@ public class RotondAndesDistributed
 		return allRestaurantesMQ.getRemoteProductos();
 	}
 
-	public Utilidad getRemoteUtilidad(String fechaIni, String fechaFin, String restau) throws JsonGenerationException, JsonMappingException, NoSuchAlgorithmException, JMSException, IOException, NonReplyException, InterruptedException 
+	public ListaUtilidad getRemoteUtilidad(String fechaIni, String fechaFin, String restau) throws JsonGenerationException, JsonMappingException, NoSuchAlgorithmException, JMSException, IOException, NonReplyException, InterruptedException 
 	{
 		// TODO Auto-generated method stub
-		return allUtilidadMQ.getRemoteUtilidad();
+		return allUtilidadMQ.getRemoteUtilidad(fechaIni,fechaFin,restau);
 	}
 
-	public Utilidad getLocalUtilidad(IntervaloFecha inter, String restau) throws Exception {
+	public ListaUtilidad getLocalUtilidad(IntervaloFecha inter, String restau) throws Exception {
 		// TODO Auto-generated method stub
 		return tm.getRentabilidadRestauranteLocal(inter, restau);
 	} 
